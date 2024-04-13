@@ -2,7 +2,7 @@ package org.example;
 
 import javax.swing.*;
 
-public class Client {
+public class Sender {
     private JPanel panel1;
     private JButton 关闭Button;
     private JTextArea textArea1;

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Reciever;
 
 import javax.swing.*;
 

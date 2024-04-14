@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.Sender">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.Sender.Sender">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -10,7 +10,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <component id="3efab" class="javax.swing.JButton" binding="关闭Button" default-binding="true">
+      <component id="3efab" class="javax.swing.JButton" binding="closeBtn">
         <constraints>
           <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -18,7 +18,7 @@
           <text value="关闭"/>
         </properties>
       </component>
-      <grid id="32901" binding="接收端面板" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="32901" binding="recieveInfoPanel" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -50,7 +50,7 @@
               <text value="端口号"/>
             </properties>
           </component>
-          <component id="b2a" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+          <component id="b2a" class="javax.swing.JTextField" binding="portNumber">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -58,7 +58,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="4a795" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+          <component id="4a795" class="javax.swing.JTextField" binding="IPAddr">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -68,7 +68,7 @@
           </component>
         </children>
       </grid>
-      <grid id="5e885" binding="发送内容面板" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="5e885" binding="sendTextPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -76,7 +76,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="83934" class="javax.swing.JLabel">
+          <component id="83934" class="javax.swing.JLabel" binding="SendTextLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -84,7 +84,7 @@
               <text value="发送内容"/>
             </properties>
           </component>
-          <component id="d6ac7" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+          <component id="d6ac7" class="javax.swing.JTextField" binding="sendText">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -94,7 +94,7 @@
           </component>
         </children>
       </grid>
-      <grid id="6ef4f" binding="发送次数面板" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="6ef4f" binding="sendTimePanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -110,15 +110,17 @@
               <text value="发送次数"/>
             </properties>
           </component>
-          <component id="d590c" class="javax.swing.JTextField" binding="textField4" default-binding="true">
+          <component id="d590c" class="javax.swing.JTextField" binding="sendTimes">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <text value=""/>
+            </properties>
           </component>
-          <component id="628ad" class="javax.swing.JButton" binding="发送Button" default-binding="true">
+          <component id="628ad" class="javax.swing.JButton" binding="sendBtn">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -128,7 +130,7 @@
           </component>
         </children>
       </grid>
-      <component id="55dfe" class="javax.swing.JTextArea" binding="textArea1" default-binding="true">
+      <component id="55dfe" class="javax.swing.JTextArea" binding="senderLog">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <minimum-size width="100" height="300"/>
@@ -137,6 +139,7 @@
         </constraints>
         <properties>
           <font size="16"/>
+          <text value=""/>
         </properties>
       </component>
       <hspacer id="4e6e1">

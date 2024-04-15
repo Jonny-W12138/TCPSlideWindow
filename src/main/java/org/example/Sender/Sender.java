@@ -6,6 +6,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 
 public class Sender {
     JPanel panel1;
@@ -34,19 +35,19 @@ public class Sender {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 SenderProcess.textToSend = sendText.getText();
-                System.out.println("发送窗体：" + SenderProcess.textToSend);
+                //System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 SenderProcess.textToSend = sendText.getText();
-                System.out.println("发送窗体：" + SenderProcess.textToSend);
+                //System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 SenderProcess.textToSend = sendText.getText();
-                System.out.println("发送窗体：" + SenderProcess.textToSend);
+                //System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
         });
         IPAddr.setText(SenderProcess.getRecieverIP());
@@ -56,7 +57,11 @@ public class Sender {
         sendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SenderProcess.senderAddMessage();
+                try {
+                    SenderProcess.senderAddMessage();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }

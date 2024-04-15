@@ -17,6 +17,7 @@ public class SenderProcess extends Thread{
 
     public static ServerSocket senderSocket;
     public static Socket recieverSocket;
+    static ObjectOutputStream objectOutputStream;  // Socket的输出流
 
     public static Sender senderUI;
 
@@ -25,10 +26,14 @@ public class SenderProcess extends Thread{
         recieverSocket = senderSocket.accept();
         System.out.println("Sender已建立通信！" + recieverSocket.getPort());
 
+        // 获取接收端的IP和端口号
         recieverPort = recieverSocket.getPort();
         recieverIP = recieverSocket.getInetAddress().toString().substring(1);
-
         System.out.println("Reciever的IP是：" + recieverIP);
+
+        // 创建Socket输出流
+        objectOutputStream = new ObjectOutputStream(recieverSocket.getOutputStream());
+
     }
 
     public static String getRecieverIP() {
@@ -40,7 +45,7 @@ public class SenderProcess extends Thread{
     }
 
     // senderAddMessage 发送端向窗口添加要发送的报文
-    public static void senderAddMessage(){
+    public static void senderAddMessage() throws IOException {
         SenderMessage messageToSend = new SenderMessage();
 
         messageToSend.ifSended=false;
@@ -59,6 +64,11 @@ public class SenderProcess extends Thread{
          */
         // 仅供测试 运行时删除上述代码
         senderWindow.addMessageToWindow(messageToSend);
+    }
+
+    public void senderSendToReciever(SenderMessage msg) throws IOException {
+        objectOutputStream.writeObject(msg);
+        objectOutputStream.flush(); // 务必flush！
     }
 
     public SenderProcess() throws IOException {
@@ -81,7 +91,7 @@ public class SenderProcess extends Thread{
 
         counter = 0;
 
-        senderWindow = new SenderWindow();
+        senderWindow = new SenderWindow(this);
         senderDataProcessor = new SenderDataProcessor();
         senderTimer = new SenderTimer(this, senderWindow);
         senderTimer.start();  // 开始运行Sender超时检测

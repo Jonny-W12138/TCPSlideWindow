@@ -3,14 +3,17 @@ package org.example.Sender;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import java.sql.Time;
 
 // 发送端进程类
-public class SenderProcess {
+public class SenderProcess extends Thread{
     public static String recieverIP;    // 接收端进程所在IP地址
     public static int recieverPort;     // 接收端进程所在端口号
     public static String textToSend;   // ui中要发送的字符串
-    public int counter;          // 报文标识累加器
-    public SenderWindow senderWindow;  // 发送窗口类
+    public static int counter;          // 报文标识累加器
+    public static SenderWindow senderWindow;  // 发送窗口类
+    public static SenderDataProcessor senderDataProcessor;
+    public static SenderTimer senderTimer;
 
     public static ServerSocket senderSocket;
     public static Socket recieverSocket;
@@ -36,14 +39,54 @@ public class SenderProcess {
         return recieverPort;
     }
 
-    public static void main(String[] args) throws IOException {
-        createConnection();
+    // senderAddMessage 发送端向窗口添加要发送的报文
+    public static void senderAddMessage(){
+        SenderMessage messageToSend = new SenderMessage();
+
+        messageToSend.ifSended=false;
+        messageToSend.ifRecieverConfirmed=false;
+        messageToSend.index=counter;
+        messageToSend.message= SenderDataProcessor.convertMessage(textToSend,counter);
+        ++counter;
+
+        System.out.println("Sender向窗口增加一条内容，index："+messageToSend.index);
+
+        // 仅供测试 运行时删除下列代码
+        /*
+        messageToSend.ifSended=true;
+        messageToSend.ifRecieverConfirmed=false;
+        messageToSend.sendTime = new Time(System.currentTimeMillis());
+         */
+        // 仅供测试 运行时删除上述代码
+        senderWindow.addMessageToWindow(messageToSend);
+    }
+
+    public SenderProcess() throws IOException {
+
+
+    }
+
+    // Start启动类调用
+    public void run(){
+        try {
+            createConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         JFrame frame = new JFrame("Sender");
         frame.setContentPane(new Sender().panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
 
+        counter = 0;
+
+        senderWindow = new SenderWindow();
+        senderDataProcessor = new SenderDataProcessor();
+        senderTimer = new SenderTimer(this, senderWindow);
+        senderTimer.start();  // 开始运行Sender超时检测
+
+        System.out.println("Sender Run!");
         while (true){}
     }
 }

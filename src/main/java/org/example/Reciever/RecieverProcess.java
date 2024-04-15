@@ -5,7 +5,7 @@ import java.io.*;
 import java.net.*;
 
 // 接收端进程类
-public class RecieverProcess {
+public class RecieverProcess extends Thread{
     static int get_situation() {
         Random rand = new Random();
         int randNum = rand.nextInt(4);
@@ -20,7 +20,17 @@ public class RecieverProcess {
     }
 
     public RecieverProcess() throws IOException {
+    }
 
+    // Start启动类调用
+    public void run(){
+        try {
+            CreateConnection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Reciever Run!");
+        while (true){}
     }
 
     public static void main(String[] args) throws Exception {

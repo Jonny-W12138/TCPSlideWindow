@@ -12,5 +12,10 @@ public class Start {
     public static void main(String[] args) throws IOException {
         senderProcess = new SenderProcess();
         recieverProcess = new RecieverProcess();
+
+        senderProcess.start();
+        recieverProcess.start();
+
+
     }
 }

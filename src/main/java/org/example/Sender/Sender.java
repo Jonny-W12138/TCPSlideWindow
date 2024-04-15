@@ -3,6 +3,7 @@ package org.example.Sender;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -29,33 +30,39 @@ public class Sender {
     }
 
     public Sender() {
-        sendText.getDocument().addDocumentListener(new DocumentListener(){
+        sendText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 SenderProcess.textToSend = sendText.getText();
-                System.out.println("发送窗体："+SenderProcess.textToSend);
+                System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 SenderProcess.textToSend = sendText.getText();
-                System.out.println("发送窗体："+SenderProcess.textToSend);
+                System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 SenderProcess.textToSend = sendText.getText();
-                System.out.println("发送窗体："+SenderProcess.textToSend);
+                System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
         });
         IPAddr.setText(SenderProcess.getRecieverIP());
-        System.out.println("接收端ip："+SenderProcess.getRecieverIP());
+        System.out.println("接收端ip：" + SenderProcess.getRecieverIP());
         portNumber.setText(Integer.toString(SenderProcess.getRecieverPort()));
-        System.out.println("接收端端口："+SenderProcess.getRecieverPort());
+        System.out.println("接收端端口：" + SenderProcess.getRecieverPort());
+        sendBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SenderProcess.senderAddMessage();
+            }
+        });
     }
 
 
-    public void main(){
+    public void main() {
 
     }
 

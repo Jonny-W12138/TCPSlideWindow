@@ -36,6 +36,10 @@ public class SenderProcess extends Thread{
 
     }
 
+    void createACKConnction(){
+
+    }
+
     public static String getRecieverIP() {
         return recieverIP;
     }

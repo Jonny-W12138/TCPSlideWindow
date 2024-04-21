@@ -4,13 +4,15 @@ import org.example.Sender.SenderProcess;
 import org.example.Sender.SenderWindow;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Random;
 // 报文段接收线程类
 public class RecieverRecieve {
-    private RecieverProcess rp;
-    private RecieverWindow rw;
-    Socket Reciever_recieve_Socket;
+    private static ObjectInputStream objectInputStream;
+    private static RecieverProcess rp;
+    private static RecieverWindow rw;
+    static Socket recieverSocket;
 
 
     public RecieverRecieve(RecieverProcess rp, RecieverWindow rw) {
@@ -19,7 +21,7 @@ public class RecieverRecieve {
     }
 
 
-    public int get_error()
+    public static int get_error()
     {
         Random random = new Random();
         int randomNumber = random.nextInt(4); // 生成一个0到3之间的随机数
@@ -27,31 +29,70 @@ public class RecieverRecieve {
     }
 
 
-    public void run(){
+        static void CreateConnection() throws IOException {
+        recieverSocket = new Socket("localhost", 8080);
+        System.out.println("接收端已建立通信！" + recieverSocket.getPort());
+
+        objectInputStream = new ObjectInputStream(recieverSocket.getInputStream());
         try {
-            try {
-                Thread.sleep(1000); // 等待1秒钟， 等待接收端进程建立通信
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            Reciever_recieve_Socket = new Socket("localhost", 8080);
-            System.out.println("Reciever_recieve已建立通信:" + Reciever_recieve_Socket.getPort());
-
             while (true) {
-                SenderACKMessage senderACKMessage = null;
-                try {
-                    senderACKMessage = (SenderACKMessage) ackInputStream.readObject();
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+                // 从流中读取对象并反序列化
+                byte[] receivedMessage = (RecieverOriginMessage) objectInputStream.readObject();
+                int ID=RecieverDataProcessor.getMessageId(receivedMessage);
+                int length=RecieverDataProcessor.getLength(receivedMessage);
+                String data=RecieverDataProcessor.getData(receivedMessage);
+                int error_type=get_error();
+                if(error_type==0)
+                {
+                    System.out.println("Reciever:收到Socket消息： " + ID);
+                    if(ID<rw.get_pStart()||ID>rw.get_pTail())
+                    {
+                        //show()
+                    }
+                    boolean result=rw.Is_repeat(ID);
+                    if(result)
+                    {
+                        int max_ID=rw.Get_IDmax();
+
+                        //
+                        rw.Move(max_ID);
+                        rw.message_sum=0;
+                        //show()
+                    }
+                    else
+                    {
+                        rw.Insert_Message(receivedMessage);
+                        rw.message_sum+=1;
+                        if(rw.message_sum==3)
+                        {
+                            int max_ID=rw.Get_IDmax();
+
+                            //
+                            rw.Move(max_ID);
+                            rw.message_sum=0;
+                            //show()
+                        }
+                        else
+                        {
+                            //show()
+                        }
+                    }
+
                 }
-                System.out.println("Reviev：" + senderACKMessage.ackId);
+                else if (error_type==1||error_type==2)
+                {
+                    System.out.println("error:"+error_type+" Message_ID:"+ID);
+                    //show()展示
+                }
+                else
+                {
+                    //show()
+                }
 
             }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-
     }
 
 }

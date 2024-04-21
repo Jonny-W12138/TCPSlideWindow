@@ -11,15 +11,12 @@ import org.example.Reciever.RecieverRecieve;
 // 接收窗口类
 public class RecieverWindow{
 
-    public class Message {
-        int length;
-        String data;
-        boolean is_confirm;
-    }
+
+    int size=3;//窗口大小
     int message_sum=0;//报文累加器
 
 
-    ArrayList<Message> MessageInfo_list;
+    ArrayList<RecieverOriginMessage> MessageInfo_list;
 
     private int pStart;//起始指针
     private int pTail;//尾部指针
@@ -39,7 +36,7 @@ public class RecieverWindow{
     {
         return pTail;
     }
-    public ArrayList<Message> get_MessageInfo_list()
+    public ArrayList<RecieverOriginMessage> get_MessageInfo_list()
     {
         return MessageInfo_list;
     }
@@ -75,8 +72,7 @@ public class RecieverWindow{
         return pTail;
     }
 
-    public boolean Is_repeat(byte[] messageBytes) {
-        int ID = ((messageBytes[1] & 0xFF) << 8) | (messageBytes[2] & 0xFF);
+    public boolean Is_repeat(int ID) {
         if (ID>MessageInfo_list.size()){
             return false;
         }
@@ -94,7 +90,7 @@ public class RecieverWindow{
                 list.set(i, MessageInfo_list.get(i));
             }
         }
-        MessageInfo_list.get(ID).length=RecieverDataProcessor.getLength(messageBytes);
+        MessageInfo_list.get(ID).datalength=RecieverDataProcessor.getLength(messageBytes);
         MessageInfo_list.get(ID).is_confirm=true;
         MessageInfo_list.get(ID).data=RecieverDataProcessor.getData(messageBytes);
     }

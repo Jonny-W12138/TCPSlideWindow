@@ -22,21 +22,7 @@ public class RecieverProcess extends Thread{
 
     static Socket recieverSocket;
 
-    static void CreateConnection() throws IOException {
-        recieverSocket = new Socket("localhost", 8080);
-        System.out.println("接收端已建立通信！" + recieverSocket.getPort());
 
-        objectInputStream = new ObjectInputStream(recieverSocket.getInputStream());
-        try {
-            while (true) {
-                // 从流中读取对象并反序列化
-                SenderMessage receivedMessage = (SenderMessage) objectInputStream.readObject();
-                System.out.println("Reciever:收到Socket消息： " + receivedMessage.index);
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
     public RecieverProcess() throws IOException {
     }

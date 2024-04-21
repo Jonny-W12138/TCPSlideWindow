@@ -1,6 +1,8 @@
 package org.example.Sender;
 
-public class SenderOriginMessage {
+import java.io.Serializable;
+
+public class SenderOriginMessage implements Serializable {
     public char type;   // 报文类型
     public int messageId;   // 报文标识
     public int dataLength;  // 数据长度

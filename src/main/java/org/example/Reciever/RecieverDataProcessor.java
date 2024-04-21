@@ -45,6 +45,7 @@ public class RecieverDataProcessor {
         int dataLength = (highByte << 8) | lowByte; // 合并两个字节得到数据长度
 
 
+
         dataBytes = new byte[dataLength];
         System.arraycopy(messageBytes, 5, dataBytes, 0, dataLength); // 从索引5开始复制数据部分
     }

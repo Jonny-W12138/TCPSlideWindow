@@ -21,6 +21,8 @@ public class Sender {
     private JPanel sendTextPanel;
     private JPanel sendTimePanel;
     private JLabel SendTextLabel;
+    private JTable table1;
+    public String logContext;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Sender");
@@ -64,6 +66,14 @@ public class Sender {
                 }
             }
         });
+        Timer timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Update the text field with the current value of the variable
+                senderLog.setText(logContext);
+            }
+        });
+        timer.start(); // Start the timer
+        while (true) {}
     }
 
 

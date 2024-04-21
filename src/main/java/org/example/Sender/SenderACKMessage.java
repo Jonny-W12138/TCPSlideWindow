@@ -1,6 +1,8 @@
 package org.example.Sender;
 
-public class SenderACKMessage {
+import java.io.Serializable;
+
+public class SenderACKMessage implements Serializable {
     char type;  // 报文类型
     int ackId;  // 确认报文标识
     int newWindowSize;  // 新的窗口大小

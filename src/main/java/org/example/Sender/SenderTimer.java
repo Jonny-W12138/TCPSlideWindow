@@ -17,7 +17,7 @@ public class SenderTimer extends Thread {
         while (true){
             if(!senderWindow.senderWindowList.isEmpty()){
                 // 只要窗口中有元素 就遍历
-                for (int i = 0; i < senderWindow.senderWindowList.size(); i++) {
+                for (int i = senderWindow.pStart; i <= senderWindow.pTail; i++) {
                     SenderMessage message = senderWindow.senderWindowList.get(i);
                     if (message.ifSended && !message.ifRecieverConfirmed) {
                         long currentTime = System.currentTimeMillis();

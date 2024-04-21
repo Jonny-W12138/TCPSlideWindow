@@ -6,7 +6,7 @@ import java.net.*;
 import java.sql.Time;
 
 // 发送端进程类
-public class SenderProcess extends Thread{
+public class SenderProcess extends Thread {
     public static String recieverIP;    // 接收端进程所在IP地址
     public static int recieverPort;     // 接收端进程所在端口号
     public static String textToSend;   // ui中要发送的字符串
@@ -14,7 +14,7 @@ public class SenderProcess extends Thread{
     public static SenderWindow senderWindow;  // 发送窗口类
     public static SenderDataProcessor senderDataProcessor;
     public static SenderTimer senderTimer;
-
+    public static SenderConfirm senderConfirm;  // 确认接收线程类
     public static ServerSocket senderSocket;
     public static Socket recieverSocket;
     static ObjectOutputStream objectOutputStream;  // Socket的输出流
@@ -36,7 +36,7 @@ public class SenderProcess extends Thread{
 
     }
 
-    void createACKConnction(){
+    void createACKConnction() {
 
     }
 
@@ -52,13 +52,13 @@ public class SenderProcess extends Thread{
     public static void senderAddMessage() throws IOException {
         SenderMessage messageToSend = new SenderMessage();
 
-        messageToSend.ifSended=false;
-        messageToSend.ifRecieverConfirmed=false;
-        messageToSend.index=counter;
-        messageToSend.message= SenderDataProcessor.convertMessage(textToSend,counter);
+        messageToSend.ifSended = false;
+        messageToSend.ifRecieverConfirmed = false;
+        messageToSend.index = counter;
+        messageToSend.message = SenderDataProcessor.convertMessage(textToSend, counter);
         ++counter;
 
-        System.out.println("Sender向窗口增加一条内容，index："+messageToSend.index);
+        System.out.println("Sender向窗口增加一条内容，index：" + messageToSend.index);
 
         // 仅供测试 运行时删除下列代码
         /*
@@ -70,7 +70,7 @@ public class SenderProcess extends Thread{
         senderWindow.addMessageToWindow(messageToSend);
     }
 
-    public void senderSendToReciever(SenderMessage msg) throws IOException {
+    public void senderSendToReciever(byte[] msg) throws IOException {
         objectOutputStream.writeObject(msg);
         objectOutputStream.flush(); // 务必flush！
     }
@@ -81,9 +81,9 @@ public class SenderProcess extends Thread{
     }
 
     // Start启动类调用
-    public void run(){
+    public void run() {
         try {
-            createConnection();
+            createConnection(); //sender创建数据包发送的Socket服务器端
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -98,9 +98,11 @@ public class SenderProcess extends Thread{
         senderWindow = new SenderWindow(this);
         senderDataProcessor = new SenderDataProcessor();
         senderTimer = new SenderTimer(this, senderWindow);
+        senderConfirm = new SenderConfirm(this, senderWindow);
         senderTimer.start();  // 开始运行Sender超时检测
-
+        senderConfirm.start();  // 开始运行Sender确认接收线程
         System.out.println("Sender Run!");
-        while (true){}
+        while (true) {
+        }
     }
 }

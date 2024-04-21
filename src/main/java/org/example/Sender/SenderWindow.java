@@ -13,7 +13,8 @@ public class SenderWindow {
     int pTail;
     int windowSize; // 窗口大小
     SenderProcess senderProcess;
-    ArrayList<SenderMessage> senderWindowList;
+    ArrayList<SenderMessage>
+            senderWindowList;
     Timer senderWindowTimer;
 
     public SenderWindow(SenderProcess sp) {
@@ -61,9 +62,24 @@ public class SenderWindow {
 
     }
 
+    public void ackRenewPtr(int ackId, int newWindowSize) {
+        if (ackId < pStart) {   // ACK已过期
+            return;
+        }
+        for (int i = pStart; i < ackId; i++) {  // 更新已确认的报文为收到
+            senderWindowList.get(i).ifRecieverConfirmed = true;
+        }
+        pStart = ackId;
+        pCur = pStart;
+        if (newWindowSize >= 0) {   // 更新窗口大小（如果有要求）
+            windowSize = newWindowSize;
+        }
+        pTail = Math.min(pStart + windowSize - 1, senderWindowList.size() - 1); // 更新窗口尾指针
+    }
+
     public void sendMessageToReciever(int index) throws IOException {
         SenderMessage message = senderWindowList.get(index);
-        senderProcess.senderSendToReciever(message);
+        senderProcess.senderSendToReciever(message.message);    // 调用senderProcess的发送方法
         senderWindowList.get(index).ifSended = true;
         senderWindowList.get(index).sendTime = new Time(System.currentTimeMillis());
         System.out.println("Sender：senderProcess发送报文：" + index);

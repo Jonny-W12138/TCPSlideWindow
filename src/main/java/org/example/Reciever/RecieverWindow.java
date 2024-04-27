@@ -5,6 +5,9 @@ import org.example.Sender.SenderMessage;
 import org.example.Sender.SenderProcess;
 import sun.plugin2.message.Message;
 import org.example.Sender.SenderDataProcessor;
+
+import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
 import org.example.Reciever.RecieverDataProcessor;
 import org.example.Reciever.RecieverRecieve;
@@ -14,7 +17,7 @@ public class RecieverWindow{
 
     int size=3;//窗口大小
     int message_sum=0;//报文累加器
-
+    static RecieverProcess recieverProcess;
 
     ArrayList<RecieverOriginMessage> MessageInfo_list;
 
@@ -42,20 +45,13 @@ public class RecieverWindow{
     }
 
 
-    public RecieverWindow() {
+    public RecieverWindow(RecieverProcess rp) {
         pStart = 0;
         pTail = 0;
         MessageInfo_list=new ArrayList<>();
+        recieverProcess = rp;
     }
 
-    public byte[] send_ack(int IDmax)//发送确认
-    {
-        byte[] messageBytes = new byte[3];
-        messageBytes[0] = 1;
-        messageBytes[1] = (byte) ((IDmax >> 8) & 0xFF); // 高位
-        messageBytes[2] = (byte) (IDmax & 0xFF); // 低位
-        return messageBytes;
-    }
 
     public void Move(int IDmax)  //改变接收窗口的位置
     {
@@ -68,11 +64,13 @@ public class RecieverWindow{
         for (int i = pStart; i <= pTail; i++) {
             if (!MessageInfo_list.get(i).is_confirm)
                 return i;
+
         }
         return pTail;
     }
 
-    public boolean Is_repeat(int ID) {
+    public boolean Is_repeat(int ID)//判断是否是重复报文段
+    {
         if (ID>MessageInfo_list.size()){
             return false;
         }
@@ -80,74 +78,38 @@ public class RecieverWindow{
     }
 
 
-    public void Insert_Message(byte[] messageBytes)
+    public void Insert_Message(byte[] messageBytes, Time time)//插入报文段
     {
         int ID = RecieverDataProcessor.getMessageId(messageBytes);
         if(ID>MessageInfo_list.size())
         {
-            ArrayList<Message> list=new ArrayList<>(ID+5);
+            ArrayList<RecieverOriginMessage> list=new ArrayList<>(ID+5);
             for (int i=0;i<MessageInfo_list.size();i++) {
                 list.set(i, MessageInfo_list.get(i));
             }
         }
-        MessageInfo_list.get(ID).datalength=RecieverDataProcessor.getLength(messageBytes);
+        MessageInfo_list.get(ID).dataLength=RecieverDataProcessor.getLength(messageBytes);
         MessageInfo_list.get(ID).is_confirm=true;
         MessageInfo_list.get(ID).data=RecieverDataProcessor.getData(messageBytes);
+        MessageInfo_list.get(ID).Recieve_Time=time;
     }
 
-    void operate()
-    {
-        int IDmax=Get_IDmax();
-        byte[]ACK=new byte[3];
-        ACK=send_ack(IDmax+1);//确认消息
-        Move(IDmax);
-        message_sum=0;
+
+
+    public static void Reciever_send_to_Sender(byte[] msg) throws IOException {
+        recieverProcess.ackOutputStream.writeObject(msg);    // 向输出流中写入对象
+        recieverProcess.ackOutputStream.flush(); // 务必flush！
     }
 
-    public void process(byte[] messageBytes)//接收报文段处理流程
-    {
-        RecieverRecieve rr=new RecieverRecieve();
-        RecieverDataProcessor rdp=new RecieverDataProcessor(messageBytes);
-        int ID=rdp.getMessageId();//解析报文段,获得IDseg
-        int error_type=rr.get_error();
-        if(error_type==0)//正常接收
-        {
-            if(ID>pTail||ID<pStart)
-            {
-                show_error();
-            }
-            else
-            {
-                if(MessageInfo_list.get(ID).is_confirm)
-                {
-                    operate();
-                    show();
-
-                }
-                else
-                {
-                    Insert_Message(messageBytes);
-                    message_sum=message_sum+1;
-                    if (message_sum==3)
-                    {
-                        operate();
-                    }
-                    show();
-                }
-            }
-
-        }
-        else if (error_type==1||error_type==2)
-        {
-            show_error();
-        }
-        else
-        {
-
-        }
-
+    public static void sendMessageToSender(RecieverACKMessage message) throws IOException {
+        int index=message.ackId;
+        byte[] ack= message.toByte();
+        System.out.println("Receiver：senderProcess发送报文：" + index);
+        Reciever_send_to_Sender(ack);
 
     }
+
+
 
     public void show_error()
     {

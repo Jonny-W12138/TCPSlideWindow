@@ -71,7 +71,7 @@ public class SenderProcess extends Thread {
     }
 
     public void senderSendToReciever(byte[] msg) throws IOException {
-        objectOutputStream.writeObject(msg);
+        objectOutputStream.writeObject(msg);    // 向输出流中写入对象
         objectOutputStream.flush(); // 务必flush！
     }
 

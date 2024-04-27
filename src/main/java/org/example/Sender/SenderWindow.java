@@ -14,7 +14,8 @@ public class SenderWindow {
     int windowSize; // 窗口大小
     SenderProcess senderProcess;
     ArrayList<SenderMessage>
-            senderWindowList;
+
+            senderWindowList;//报文段信息列表
     Timer senderWindowTimer;
 
     public SenderWindow(SenderProcess sp) {

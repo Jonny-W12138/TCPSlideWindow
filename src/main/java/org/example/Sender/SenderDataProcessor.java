@@ -6,8 +6,52 @@ import java.util.Arrays;
 public class SenderDataProcessor {
     public static byte[] convertMessage(String content, int messageId) {
         SenderOriginMessage message = new SenderOriginMessage(messageId, content);
-        return message.toBytes();
+        byte[] messageBytes = message.toBytes();
+
+        // 计算校验和
+        byte[] checksum = calculateChecksum(messageBytes);
+
+        // 将校验和追加到消息末尾
+        byte[] result = new byte[messageBytes.length + checksum.length];
+        System.arraycopy(messageBytes, 0, result, 0, messageBytes.length);
+        System.arraycopy(checksum, 0, result, messageBytes.length, checksum.length);
+
+        return result;
     }
+
+    private static byte[] calculateChecksum(byte[] data) {
+        int checksumValue = 0;
+        int carry = 0;
+
+        // 对每16位进行计算
+        for (int i = 0; i < data.length; i++) {
+            checksumValue += (data[i] & 0xFF) << 8;
+            if ((checksumValue & 0xFFFF0000) != 0) {
+                checksumValue &= 0xFFFF;
+                checksumValue++;
+            }
+
+            i++;
+            if (i < data.length) {
+                checksumValue += (data[i] & 0xFF);
+                if ((checksumValue & 0xFFFF0000) != 0) {
+                    checksumValue &= 0xFFFF;
+                    checksumValue++;
+                }
+            }
+        }
+
+        // 取反得到校验和
+        checksumValue = ~checksumValue & 0xFFFF;
+
+        // 将校验和值转换为字节数组
+        byte[] checksumBytes = new byte[2];
+        checksumBytes[0] = (byte) (checksumValue >> 8);
+        checksumBytes[1] = (byte) (checksumValue & 0xFF);
+
+        return checksumBytes;
+    }
+
 
     // 以下为测试用代码
     public static int getMessageId(byte[] messageBytes) {

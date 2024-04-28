@@ -18,7 +18,48 @@ public class RecieverRecieve extends Thread {
     static Socket recieverSocket;// 对话框日志显示
     public static int portNum;
 
+    public static byte[] verifyChecksum(byte[] dataWithChecksum) {
+        byte[] data = new byte[dataWithChecksum.length - 2];
+        System.arraycopy(dataWithChecksum, 0, data, 0, data.length);
 
+        int checksumValue = 0;
+        int carry = 0;
+
+        // 对每16位进行计算
+        for (int i = 0; i < data.length; i++) {
+            checksumValue += (data[i] & 0xFF) << 8;
+            if ((checksumValue & 0xFFFF0000) != 0) {
+                checksumValue &= 0xFFFF;
+                checksumValue++;
+            }
+
+            i++;
+            if (i < data.length) {
+                checksumValue += (data[i] & 0xFF);
+                if ((checksumValue & 0xFFFF0000) != 0) {
+                    checksumValue &= 0xFFFF;
+                    checksumValue++;
+                }
+            }
+        }
+
+        // 取反得到校验和
+        checksumValue = ~checksumValue & 0xFFFF;
+
+        // 检查校验和是否匹配
+        byte[] checksumBytes = new byte[2];
+        checksumBytes[0] = (byte) (checksumValue >> 8);
+        checksumBytes[1] = (byte) (checksumValue & 0xFF);
+
+        if (checksumBytes[0] == dataWithChecksum[dataWithChecksum.length - 2] &&
+                checksumBytes[1] == dataWithChecksum[dataWithChecksum.length - 1]) {
+            // 校验和匹配，返回去除校验和后的数据
+            return data;
+        } else {
+            // 校验和不匹配，返回空数组或者抛出异常，具体操作视情况而定
+            return new byte[0];
+        }
+    }
 
 
     public RecieverRecieve(RecieverProcess rpinput, RecieverWindow rwinput) {
@@ -59,10 +100,12 @@ public class RecieverRecieve extends Thread {
             while (true) {
                 // 从流中读取对象并反序列化
                 byte[] receivedMessage = (byte[]) objectInputStream.readObject();   // 从流中读取对象并反序列化
+                receivedMessage=verifyChecksum(receivedMessage);
                 int ID = RecieverDataProcessor.getMessageId(receivedMessage); // 获取报文ID
                 int length = RecieverDataProcessor.getLength(receivedMessage); // 获取报文长度
                 String data = RecieverDataProcessor.getData(receivedMessage); // 获取报文数据
                 int error_type = get_error();
+
                 // 方便调试 临时设置为0
                 // error_type = 0;
                 System.out.println("Reciever:收到Socket消息" + ID +":"+data);

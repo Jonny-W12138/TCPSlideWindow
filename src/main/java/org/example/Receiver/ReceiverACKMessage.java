@@ -1,22 +1,22 @@
-package org.example.Reciever;
+package org.example.Receiver;
 
 import java.io.Serializable;
 
-public class RecieverACKMessage implements Serializable {
+public class ReceiverACKMessage implements Serializable {
     char type;  // 报文类型
     int ackId;  // 确认报文标识
     public int newWindowSize;  // 新的窗口大小
 
-    public RecieverACKMessage(int ackId, int newWindowSize) {
+    public ReceiverACKMessage(int ackId, int newWindowSize) {
         this.type = 1;
         this.ackId = ackId;
         this.newWindowSize = newWindowSize;
     }
 
-    public RecieverACKMessage(int ackId) {
+    public ReceiverACKMessage(int ackId) {
         this.type = 1;
         this.ackId = ackId;
-        this.newWindowSize = RecieverProcess.newWindowSize;
+        this.newWindowSize = ReceiverProcess.newWindowSize;
     }
 
     public byte[] toByte() {

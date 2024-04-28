@@ -1,17 +1,17 @@
 package org.example;
 
-import org.example.Reciever.RecieverProcess;
+import org.example.Receiver.ReceiverProcess;
 import org.example.Sender.SenderProcess;
 
 import java.io.IOException;
 
 public class Start {
     static SenderProcess senderProcess;
-    static RecieverProcess recieverProcess;
+    static ReceiverProcess recieverProcess;
 
     public static void main(String[] args) throws IOException {
         senderProcess = new SenderProcess();
-        recieverProcess = new RecieverProcess();
+        recieverProcess = new ReceiverProcess();
 
         senderProcess.start();
         recieverProcess.start();

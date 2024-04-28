@@ -1,4 +1,4 @@
-package org.example.Reciever;
+package org.example.Receiver;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
@@ -8,16 +8,16 @@ import java.io.*;
 import java.net.*;
 
 // 报文段接收端进程类
-public class RecieverProcess extends Thread {
+public class ReceiverProcess extends Thread {
     static ObjectInputStream objectInputStream;
-    public static ServerSocket recieverConfirmSocket;
+    public static ServerSocket receiverConfirmSocket;
     public static Socket senderConfirmSocket;
     public static String textDisplay = "";
     public static int newWindowSize=5;
     ObjectOutputStream ackOutputStream;
-    RecieverRecieve recieverRecieve;
-    RecieverWindow recieverWindow;
-    RecieverConfirm recieverConfirm;
+    ReceiverReceive receiverReceive;
+    ReceiverWindow receiverWindow;
+    ReceiverConfirm receiverConfirm;
 
 
     static int get_situation() {
@@ -26,34 +26,34 @@ public class RecieverProcess extends Thread {
         return randNum;
     }
 
-    static Socket recieverSocket;
+    static Socket receiverSocket;
 
     /*static void CreateConnection() throws IOException {
-        recieverSocket = new Socket("localhost", 8080);
-        System.out.println("接收端已建立通信！" + recieverSocket.getPort());
-        textDisplay += "接收端已建立通信！" + recieverSocket.getPort() + "\n";
+        receiverSocket = new Socket("localhost", 8080);
+        System.out.println("接收端已建立通信！" + receiverSocket.getPort());
+        textDisplay += "接收端已建立通信！" + receiverSocket.getPort() + "\n";
 
-        objectInputStream = new ObjectInputStream(recieverSocket.getInputStream());
+        objectInputStream = new ObjectInputStream(receiverSocket.getInputStream());
         try {
             while (true) {
                 // 从流中读取对象并反序列化
                 SenderMessage receivedMessage = (SenderMessage) objectInputStream.readObject();
-                System.out.println("Reciever:收到Socket消息： " + receivedMessage.index);
-                textDisplay += "Reciever:收到Socket消息： " + receivedMessage.index + "\n";
+                System.out.println("Receiver:收到Socket消息： " + receivedMessage.index);
+                textDisplay += "Receiver:收到Socket消息： " + receivedMessage.index + "\n";
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }*/
 
-    public RecieverProcess() throws IOException {
+    public ReceiverProcess() throws IOException {
     }
 
     // Start启动类调用
     public void run() {
-        recieverWindow = new RecieverWindow(this);
-        recieverRecieve = new RecieverRecieve(this, recieverWindow);
-        recieverConfirm = new RecieverConfirm(recieverWindow);
+        receiverWindow = new ReceiverWindow(this);
+        receiverReceive = new ReceiverReceive(this, receiverWindow);
+        receiverConfirm = new ReceiverConfirm(receiverWindow);
 
         try {
             UIManager.setLookAndFeel( new FlatIntelliJLaf());
@@ -62,7 +62,7 @@ public class RecieverProcess extends Thread {
         }
 
         JFrame frame = new JFrame("Receiver");
-        frame.setContentPane(new Receiver(recieverWindow).Receiver);
+        frame.setContentPane(new Receiver(receiverWindow).Receiver);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
@@ -73,9 +73,9 @@ public class RecieverProcess extends Thread {
             throw new RuntimeException(e);
         }
          */
-        System.out.println("Reciever Run!");
-        recieverRecieve.start();    // 运行recieverRecieve线程 在其中尝试建立通信
-        recieverConfirm.start();    // 运行recieverConfirm线程
+        System.out.println("Receiver Run!");
+        receiverReceive.start();    // 运行receiverReceive线程 在其中尝试建立通信
+        receiverConfirm.start();    // 运行receiverConfirm线程
         try {
             createConnection(); // 创建确认连接？应该在这里？？
         } catch (IOException e) {
@@ -91,22 +91,22 @@ public class RecieverProcess extends Thread {
     }*/
 
     int getPStart() {
-        if (recieverWindow == null)
+        if (receiverWindow == null)
             return -1;
-        return recieverWindow.get_pStart();
+        return receiverWindow.get_pStart();
     }
 
     int getPTail() {
-        if (recieverWindow == null)
+        if (receiverWindow == null)
             return -1;
-        return recieverWindow.get_pTail();
+        return receiverWindow.get_pTail();
     }
 
     void createConnection() throws IOException {
-        recieverConfirmSocket = new ServerSocket(8081);
-        senderConfirmSocket = recieverConfirmSocket.accept();
-        System.out.println("RecieverConfirm已建立通信！" + senderConfirmSocket.getPort());
-        textDisplay += "RecieverConfirm已与Sender建立通信！" + senderConfirmSocket.getPort() + "\n";
+        receiverConfirmSocket = new ServerSocket(8081);
+        senderConfirmSocket = receiverConfirmSocket.accept();
+        System.out.println("ReceiverConfirm已建立通信！" + senderConfirmSocket.getPort());
+        textDisplay += "ReceiverConfirm已与Sender建立通信！" + senderConfirmSocket.getPort() + "\n";
         // 创建Socket输出流
         ackOutputStream = new ObjectOutputStream(senderConfirmSocket.getOutputStream());
     }

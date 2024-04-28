@@ -1,4 +1,4 @@
-package org.example.Reciever;
+package org.example.Receiver;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -11,7 +11,7 @@ public class Receiver {
     private JTextField senderWindowSize;
     private JButton 关闭Button;
     public JPanel Receiver;
-    private JTextArea recieverLog;
+    private JTextArea receiverLog;
     private JPanel ptrPanel;
     private JLabel pStartLabel;
     private JTextField pStart;
@@ -19,10 +19,10 @@ public class Receiver {
     private JTextField pTail;
     private JScrollBar scrollBar1;
     private JButton modifySenderBtn;
-    private RecieverWindow recieverWindow;
+    private ReceiverWindow receiverWindow;
 
-    public Receiver(RecieverWindow rw) {
-        recieverWindow = rw;
+    public Receiver(ReceiverWindow rw) {
+        receiverWindow = rw;
 
         senderWindowSize.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -43,21 +43,21 @@ public class Receiver {
         Timer timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Update the text field with the current value of the variable
-                recieverLog.setText(RecieverProcess.textDisplay);
-                pStart.setText(String.valueOf(recieverWindow.get_pStart()));
-                pTail.setText(String.valueOf(recieverWindow.get_pTail()));
-                portNum.setText(String.valueOf(RecieverRecieve.portNum));
+                receiverLog.setText(ReceiverProcess.textDisplay);
+                pStart.setText(String.valueOf(receiverWindow.get_pStart()));
+                pTail.setText(String.valueOf(receiverWindow.get_pTail()));
+                portNum.setText(String.valueOf(ReceiverReceive.portNum));
             }
         });
         timer.start();
         modifySenderBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RecieverProcess.newWindowSize = Integer.parseInt(senderWindowSize.getText());
-                System.out.println("【Debug】新的窗口大小为："+RecieverProcess.newWindowSize);
-                RecieverACKMessage ank_message = new RecieverACKMessage(-1,RecieverProcess.newWindowSize);
+                ReceiverProcess.newWindowSize = Integer.parseInt(senderWindowSize.getText());
+                System.out.println("【Debug】新的窗口大小为："+ReceiverProcess.newWindowSize);
+                ReceiverACKMessage ank_message = new ReceiverACKMessage(-1,ReceiverProcess.newWindowSize);
                 try {
-                    RecieverWindow.sendMessageToSender(ank_message);
+                    ReceiverWindow.sendMessageToSender(ank_message);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }

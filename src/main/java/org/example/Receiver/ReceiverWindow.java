@@ -1,18 +1,18 @@
-package org.example.Reciever;
+package org.example.Receiver;
 
 import java.io.IOException;
 import java.sql.Time;
 import java.util.HashMap;
 
 // 接收窗口类
-public class RecieverWindow {
+public class ReceiverWindow {
 
 
     int size = 3;//窗口大小
     int message_sum = 0;//报文累加器
-    static RecieverProcess recieverProcess;
+    static ReceiverProcess receiverProcess;
 
-    static HashMap<Integer, RecieverOriginMessage> MessageInfo_list;
+    static HashMap<Integer, ReceiverOriginMessage> MessageInfo_list;
 
     public static int pStart;//起始指针
     public static int pTail;//尾部指针
@@ -31,16 +31,16 @@ public class RecieverWindow {
         return pTail;
     }
 
-    public HashMap<Integer, RecieverOriginMessage> get_MessageInfo_list() {
+    public HashMap<Integer, ReceiverOriginMessage> get_MessageInfo_list() {
         return MessageInfo_list;
     }
 
 
-    public RecieverWindow(RecieverProcess rp) {
+    public ReceiverWindow(ReceiverProcess rp) {
         pStart = 0;
         pTail = pStart + size;
         MessageInfo_list = new HashMap<>();
-        recieverProcess = rp;
+        receiverProcess = rp;
     }
 
 
@@ -61,7 +61,7 @@ public class RecieverWindow {
                 break;
             }
         }
-        System.out.println("【Debug】Reciever:MaxID：" + (res + 1));
+        System.out.println("【Debug】Receiver:MaxID：" + (res + 1));
         return res + 1;
     }
 
@@ -76,47 +76,49 @@ public class RecieverWindow {
 
     public void Insert_Message(byte[] messageBytes, Time time)//插入报文段
     {
-        int ID = RecieverDataProcessor.getMessageId(messageBytes);
+        int ID = ReceiverDataProcessor.getMessageId(messageBytes);
         /*if(ID>=MessageInfo_list.size())
         {
-            ArrayList<RecieverOriginMessage> list=new ArrayList<>(ID+5);
+            ArrayList<ReceiverOriginMessage> list=new ArrayList<>(ID+5);
             for (int i=0;i<MessageInfo_list.size();i++) {
                 list.set(i, MessageInfo_list.get(i));
             }
             MessageInfo_list = list;
         }*/
-        MessageInfo_list.put(ID, new RecieverOriginMessage(-1, "", null));
+        MessageInfo_list.put(ID, new ReceiverOriginMessage(-1, "", null));
         MessageInfo_list.get(ID).messageId = ID;
-        MessageInfo_list.get(ID).dataLength = RecieverDataProcessor.getLength(messageBytes);
+        MessageInfo_list.get(ID).dataLength = ReceiverDataProcessor.getLength(messageBytes);
         MessageInfo_list.get(ID).is_confirm = false;
-        MessageInfo_list.get(ID).data = RecieverDataProcessor.getData(messageBytes);
-        MessageInfo_list.get(ID).Recieve_Time = time;
+        MessageInfo_list.get(ID).data = ReceiverDataProcessor.getData(messageBytes);
+        MessageInfo_list.get(ID).Receive_Time = time;
     }
 
 
-    public static void Reciever_send_to_Sender(byte[] msg) throws IOException {
-        recieverProcess.ackOutputStream.writeObject(msg);    // 向输出流中写入对象
-        recieverProcess.ackOutputStream.flush(); // 务必flush！
+    public static void Receiver_send_to_Sender(byte[] msg) throws IOException {
+        receiverProcess.ackOutputStream.writeObject(msg);    // 向输出流中写入对象
+        receiverProcess.ackOutputStream.flush(); // 务必flush！
     }
 
 
-    public static void sendMessageToSender(RecieverACKMessage message) throws IOException {
+    public static void sendMessageToSender(ReceiverACKMessage message) throws IOException {
         int index = message.ackId;
         byte[] ack = message.toByte();
         if(index == -1){
             System.out.println("Receiver：将sender窗口调整为：" + message.newWindowSize);
-            RecieverProcess.textDisplay += "ReceiverConfirm：将sender窗口调整为：" + message.newWindowSize + "\n";
+            ReceiverProcess.textDisplay += "ReceiverConfirm：将sender窗口调整为：" + message.newWindowSize + "\n";
         }else{
             System.out.println("Receiver：向sender发送ACK报文：" + index);
-            RecieverProcess.textDisplay += "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
+            ReceiverProcess.textDisplay += "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
         }
         for (int i = 0; i < index; i++) {
             if(MessageInfo_list.get(i)!=null){
                 MessageInfo_list.get(i).is_confirm = true; // 将ackID之前的报文段标记为已确认
             }
         }
-        Reciever_send_to_Sender(ack);
-        Move(index);
+        Receiver_send_to_Sender(ack);
+        if(index != -1){
+            Move(index);
+        }
 
     }
 

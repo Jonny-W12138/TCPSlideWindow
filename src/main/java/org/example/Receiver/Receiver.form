@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.Reciever.Receiver">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.example.Receiver.Receiver">
   <grid id="27dc6" binding="Receiver" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -156,7 +156,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="19bc2" class="javax.swing.JTextArea" binding="recieverLog">
+          <component id="19bc2" class="javax.swing.JTextArea" binding="receiverLog">
             <constraints/>
             <properties>
               <dragEnabled value="false"/>

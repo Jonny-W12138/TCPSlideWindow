@@ -1,9 +1,9 @@
-package org.example.Reciever;
+package org.example.Receiver;
 
 import java.util.Arrays;
 
 // 数据封装类
-public class RecieverDataProcessor {
+public class ReceiverDataProcessor {
     private int dataLength;//数据长度
     private int messageId;// 报文标识
     private byte[] dataBytes;// 报文内容
@@ -35,7 +35,7 @@ public class RecieverDataProcessor {
         return new String(dataBytes);
     }
 
-    public RecieverDataProcessor(byte[] messageBytes)
+    public ReceiverDataProcessor(byte[] messageBytes)
     {
         int highByte = (messageBytes[1] & 0xFF); // 提取高位字节
         int lowByte = (messageBytes[2] & 0xFF);  // 提取低位字节

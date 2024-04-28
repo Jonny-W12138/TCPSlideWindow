@@ -10,6 +10,7 @@ public class SenderProcess extends Thread {
     public static String recieverIP;    // 接收端进程所在IP地址
     public static int recieverPort;     // 接收端进程所在端口号
     public static String textToSend;   // ui中要发送的字符串
+    public static int textSendTimes = 1;   // ui中要发送的次数
     public static int counter;          // 报文标识累加器
     public static SenderWindow senderWindow;  // 发送窗口类
     public static SenderDataProcessor senderDataProcessor;
@@ -17,6 +18,7 @@ public class SenderProcess extends Thread {
     public static SenderConfirm senderConfirm;  // 确认接收线程类
     public static ServerSocket senderSocket;
     public static Socket recieverSocket;
+    public static String logDisplay;    // 日志显示
     static ObjectOutputStream objectOutputStream;  // Socket的输出流
 
     public static Sender senderUI;
@@ -25,11 +27,13 @@ public class SenderProcess extends Thread {
         senderSocket = new ServerSocket(8080);
         recieverSocket = senderSocket.accept();
         System.out.println("Sender已建立通信！" + recieverSocket.getPort());
+        logDisplay+="Sender已建立通信！" + recieverSocket.getPort()+"\n";
 
         // 获取接收端的IP和端口号
         recieverPort = recieverSocket.getPort();
         recieverIP = recieverSocket.getInetAddress().toString().substring(1);
         System.out.println("Reciever的IP是：" + recieverIP);
+        logDisplay+="Reciever的IP是：" + recieverIP+"\n";
 
         // 创建Socket输出流
         objectOutputStream = new ObjectOutputStream(recieverSocket.getOutputStream());
@@ -50,15 +54,25 @@ public class SenderProcess extends Thread {
 
     // senderAddMessage 发送端向窗口添加要发送的报文
     public static void senderAddMessage() throws IOException {
-        SenderMessage messageToSend = new SenderMessage();
+        for (int i = 0; i < textSendTimes; i++) {
+            SenderMessage messageToSend = new SenderMessage();
 
-        messageToSend.ifSended = false;
-        messageToSend.ifRecieverConfirmed = false;
-        messageToSend.index = counter;
-        messageToSend.message = SenderDataProcessor.convertMessage(textToSend, counter);
-        ++counter;
+            messageToSend.ifSended = false;
+            messageToSend.ifRecieverConfirmed = false;
+            messageToSend.index = counter;
+            messageToSend.message = SenderDataProcessor.convertMessage(textToSend, counter);
+            ++counter;
 
-        System.out.println("Sender向窗口增加一条内容，index：" + messageToSend.index);
+            System.out.println("Sender向窗口增加一条内容，index：" + messageToSend.index);
+            senderWindow.addMessageToWindow(messageToSend);
+
+            try {
+                Thread.sleep(300); // 0.3秒的停顿
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         // 仅供测试 运行时删除下列代码
         /*
@@ -67,7 +81,6 @@ public class SenderProcess extends Thread {
         messageToSend.sendTime = new Time(System.currentTimeMillis());
          */
         // 仅供测试 运行时删除上述代码
-        senderWindow.addMessageToWindow(messageToSend);
     }
 
     public void senderSendToReciever(byte[] msg) throws IOException {

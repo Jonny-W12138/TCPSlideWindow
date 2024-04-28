@@ -11,4 +11,10 @@ public class SenderACKMessage implements Serializable {
         this.type = 1;
         this.ackId = ackId;
     }
+
+    public SenderACKMessage(byte[] bytes) {
+        this.type = (char) bytes[0];
+        this.ackId = ((bytes[1] & 0xFF) << 8) | (bytes[2] & 0xFF);
+        this.newWindowSize = ((bytes[3] & 0xFF) << 24) | ((bytes[4] & 0xFF) << 16) | ((bytes[5] & 0xFF) << 8) | (bytes[6] & 0xFF);
+    }
 }

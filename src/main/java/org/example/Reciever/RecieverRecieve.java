@@ -20,9 +20,9 @@ public class RecieverRecieve extends Thread {
 
 
 
-    public RecieverRecieve(RecieverProcess rp, RecieverWindow rw) {
-        rp = rp;
-        rw = rw;
+    public RecieverRecieve(RecieverProcess rpinput, RecieverWindow rwinput) {
+        rp = rpinput;
+        rw = rwinput;
     }
 
     public void run() {
@@ -55,8 +55,11 @@ public class RecieverRecieve extends Thread {
                 int length = RecieverDataProcessor.getLength(receivedMessage); // 获取报文长度
                 String data = RecieverDataProcessor.getData(receivedMessage); // 获取报文数据
                 int error_type = get_error();
+                // 方便调试 临时设置为0
+                error_type = 0;
                 if (error_type == 0) {
                     System.out.println("Reciever:收到Socket消息： " + ID);
+                    RecieverProcess.textDisplay += "RecieverRecieve:收到Socket消息： " + ID + "\n";
                     Time receive_time=new Time(System.currentTimeMillis());
                     if (ID < rw.get_pStart() || ID > rw.get_pTail()) {
                         //show()
@@ -91,7 +94,8 @@ public class RecieverRecieve extends Thread {
                         }
                     }
 
-                } else if (error_type == 1 || error_type == 2) {
+                }
+                else if (error_type == 1 || error_type == 2) {
                     System.out.println("error:" + error_type + " Message_ID:" + ID);
                     //show()展示
                 } else {

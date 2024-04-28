@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 public class Sender {
@@ -22,6 +20,15 @@ public class Sender {
     private JPanel sendTimePanel;
     private JLabel SendTextLabel;
     private JTable table1;
+    private JPanel windowStatus;
+    private JLabel pStartLabel;
+    private JTextField pStart;
+    private JLabel pCurLabel;
+    private JTextField pCur;
+    private JLabel pTailLabel;
+    private JTextField pTail;
+    private JLabel windowSizeLabel;
+    private JTextField windowSize;
     public String logContext;
 
     public static void main(String[] args) {
@@ -52,6 +59,25 @@ public class Sender {
                 //System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
         });
+        sendTimes.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                SenderProcess.textSendTimes = Integer.parseInt(sendTimes.getText());
+                //System.out.println("发送次数：" + SenderProcess.sendTimes);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                SenderProcess.textSendTimes = Integer.parseInt(sendTimes.getText());
+                //System.out.println("发送次数：" + SenderProcess.sendTimes);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                SenderProcess.textSendTimes = Integer.parseInt(sendTimes.getText());
+                //System.out.println("发送次数：" + SenderProcess.sendTimes);
+            }
+        });
         IPAddr.setText(SenderProcess.getRecieverIP());
         System.out.println("接收端ip：" + SenderProcess.getRecieverIP());
         portNumber.setText(Integer.toString(SenderProcess.getRecieverPort()));
@@ -66,14 +92,19 @@ public class Sender {
                 }
             }
         });
-        Timer timer = new Timer(1000, new ActionListener() {
+        Timer timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Update the text field with the current value of the variable
-                senderLog.setText(logContext);
+                senderLog.setText(SenderProcess.logDisplay);
+                pCur.setText(Integer.toString(SenderWindow.getPCur()));
+                pTail.setText(Integer.toString(SenderWindow.getPTail()));
+                pStart.setText(Integer.toString(SenderWindow.getPStart()));
+                windowSize.setText(Integer.toString(SenderWindow.getWindowSize()));
             }
+
         });
         timer.start(); // Start the timer
-        while (true) {}
+        // while (true) {}
     }
 
 

@@ -22,20 +22,21 @@ public class SenderTimer extends Thread {
                     if (message.ifSended && !message.ifRecieverConfirmed) {
                         long currentTime = System.currentTimeMillis();
                         long sendTime = message.sendTime.getTime();
-                        if (currentTime - sendTime > 1000) {    // 超过1s 认为超时
+                        if (currentTime - sendTime > 10000) {    // 超过10s 认为超时
                             System.out.println("Sender超时器：" + i + "已超时：" + message);
-                            try {
+                            SenderProcess.logDisplay += "Sender超时器：" + i + "已超时：" + message + "\n";
+                            /*try {
                                 senderWindow.sendMessageToReciever(i);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
-                            }
+                            }*/
                         }
                     }
                 }
 
             }
             try {
-                Thread.sleep(500); // 等待500毫秒
+                Thread.sleep(9000); // 等待500毫秒
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

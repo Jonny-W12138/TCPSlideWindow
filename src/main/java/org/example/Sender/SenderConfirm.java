@@ -16,25 +16,24 @@ public class SenderConfirm extends Thread {
         senderWindow = sw;
     }
 
-    public void run(){
+    public void run() {
         try {
-            try {
-                Thread.sleep(1000); // 等待1秒钟， 等待接收端进程建立通信
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             senderConfirmSocket = new Socket("localhost", 8081);
             System.out.println("SenderConfirm已建立通信:" + senderConfirmSocket.getPort());
-
+            ackInputStream = new ObjectInputStream(senderConfirmSocket.getInputStream());
             while (true) {
-                SenderACKMessage senderACKMessage = null;
                 try {
-                    senderACKMessage = (SenderACKMessage) ackInputStream.readObject();
+                    byte[] ackBytes = (byte[]) ackInputStream.readObject();
+                    SenderACKMessage senderACKMessage = new SenderACKMessage(ackBytes);
+                    System.out.println("SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId);
+                    senderProcess.logDisplay += "SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId + "\n";
+                    for (int i = 0; i < senderACKMessage.ackId; i++) {    //更新窗口中的报文段状态为已确认
+                        senderWindow.senderWindowList.get(i).ifRecieverConfirmed = true;
+                    }
+                    senderWindow.ackRenewPtr(senderACKMessage.ackId, senderACKMessage.newWindowSize);//更新窗口指针
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("SenderConfirm:收到Socket消息：" + senderACKMessage.ackId);
-                senderWindow.ackRenewPtr(senderACKMessage.ackId,senderACKMessage.newWindowSize);//更新窗口指针
             }
 
         } catch (IOException e) {

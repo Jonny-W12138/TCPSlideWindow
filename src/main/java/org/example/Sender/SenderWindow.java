@@ -13,15 +13,14 @@ public class SenderWindow {
     int pTail;
     int windowSize; // 窗口大小
     SenderProcess senderProcess;
-    ArrayList<SenderMessage>
-
-            senderWindowList;//报文段信息列表
+    ArrayList<SenderMessage> senderWindowList;//报文段信息列表
     Timer senderWindowTimer;
 
     public SenderWindow(SenderProcess sp) {
         pStart = 0;
         pCur = -1;
         pTail = 0;
+        windowSize = 5;
         senderWindowList = new ArrayList<SenderMessage>();
         senderProcess = sp;
         senderWindowTimer = new Timer();
@@ -33,14 +32,14 @@ public class SenderWindow {
                 while (pCur != -1 && pCur <= pTail) {
                     try {
                         sendMessageToReciever(pCur);
-                        ++pCur;
                         System.out.println("Sender：主动发送下标" + pCur + "的报文！");
+                        ++pCur;
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
-        }, 100, 100); // 每隔1秒检查一次超时
+        }, 100, 100); // 每隔0.1秒检查一次超时
     }
 
     public void addMessageToWindow(SenderMessage messageToAdd) {
@@ -84,7 +83,34 @@ public class SenderWindow {
         senderWindowList.get(index).ifSended = true;
         senderWindowList.get(index).sendTime = new Time(System.currentTimeMillis());
         System.out.println("Sender：senderProcess发送报文：" + index);
+        SenderProcess.logDisplay += "Sender：senderProcess发送报文：" + index + "\n";
     }
 
+    public static int getPStart() {
+        if (senderWindow == null) {
+            return -1;
+        }
+        return senderWindow.pStart;
+    }
 
+    public static int getPTail() {
+        if (senderWindow == null) {
+            return -1;
+        }
+        return senderWindow.pTail;
+    }
+
+    public static int getPCur() {
+        if (senderWindow == null) {
+            return -1;
+        }
+        return senderWindow.pCur;
+    }
+
+    public static int getWindowSize() {
+        if (senderWindow == null) {
+            return -1;
+        }
+        return senderWindow.windowSize;
+    }
 }

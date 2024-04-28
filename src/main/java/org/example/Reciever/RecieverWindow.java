@@ -1,18 +1,8 @@
 package org.example.Reciever;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import org.example.Sender.SenderMessage;
-import org.example.Sender.SenderProcess;
-import sun.plugin2.message.Message;
-import org.example.Sender.SenderDataProcessor;
-
 import java.io.IOException;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.example.Reciever.RecieverDataProcessor;
-import org.example.Reciever.RecieverRecieve;
 
 // 接收窗口类
 public class RecieverWindow {

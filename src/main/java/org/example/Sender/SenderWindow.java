@@ -15,6 +15,7 @@ public class SenderWindow {
     SenderProcess senderProcess;
     HashMap<Integer, SenderMessage> senderWindowList;//报文段信息列表
     Timer senderWindowTimer;
+    public static int elementNum = 0;
 
     public SenderWindow(SenderProcess sp) {
         pStart = 0;
@@ -82,10 +83,12 @@ public class SenderWindow {
     }
 
     public void sendMessageToReciever(int index) throws IOException {
+
         SenderMessage message = senderWindowList.get(index);
         senderProcess.senderSendToReciever(message.message);    // 调用senderProcess的发送方法
         senderWindowList.get(index).ifSended = true;
         senderWindowList.get(index).sendTime = new Time(System.currentTimeMillis());
+
         System.out.println("Sender：senderProcess发送报文：" + index);
         SenderProcess.logDisplay += "Sender：senderProcess发送报文：" + index + "\n";
     }

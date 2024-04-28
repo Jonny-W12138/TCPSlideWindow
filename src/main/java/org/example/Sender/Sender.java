@@ -3,8 +3,12 @@ package org.example.Sender;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import java.awt.event.*;
 import java.io.IOException;
+import java.awt.BorderLayout;
 
 public class Sender {
     JPanel panel1;
@@ -19,7 +23,7 @@ public class Sender {
     private JPanel sendTextPanel;
     private JPanel sendTimePanel;
     private JLabel SendTextLabel;
-    private JTable table1;
+    private JTable SenderTable;
     private JPanel windowStatus;
     private JLabel pStartLabel;
     private JTextField pStart;
@@ -30,6 +34,9 @@ public class Sender {
     private JLabel windowSizeLabel;
     private JTextField windowSize;
     private JScrollBar scrollBar1;
+    private JScrollPane ScrollLog;
+    private JScrollPane ScrollTable;
+    private JScrollBar scrollBar2;
     public String logContext;
 
     public static void main(String[] args) {
@@ -95,6 +102,25 @@ public class Sender {
                 }
             }
         });
+        int preElementNum = 0;
+        DefaultTableModel model = new DefaultTableModel();
+
+        JTableHeader header = SenderTable.getTableHeader();
+        header.setVisible(false);
+        for(int i=0;i<12;++i){
+            model.addColumn("");
+        }
+        model.addRow(new Object[]{"Alice", 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30});
+        SenderTable.setModel(model);
+
+        for(int i=0;i<12;++i){
+            TableColumn column = SenderTable.getColumnModel().getColumn(i);
+            column.setMinWidth(100);
+            column.setMaxWidth(100);
+        }
+        SenderTable.setRowHeight(50);
+
+
         Timer timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Update the text field with the current value of the variable
@@ -103,11 +129,16 @@ public class Sender {
                 pTail.setText(Integer.toString(SenderWindow.getPTail()));
                 pStart.setText(Integer.toString(SenderWindow.getPStart()));
                 windowSize.setText(Integer.toString(SenderWindow.getWindowSize()));
+                SenderTable.removeAll();
+                /*for(int i=0;i<SenderWindow.elementNum;i++){
+                    TableColumn newColumn = new TableColumn(i);
+                    SenderTable.addColumn(newColumn);
+                }*/
             }
 
         });
         timer.start(); // Start the timer
-        // while (true) {}
+
     }
 
 

@@ -41,5 +41,4 @@ public class SenderDataProcessor {
         System.out.println(("解码 - 原始长度：" + getLength(messageBytes)));
         System.out.println(("解码 - 原始字符串：" + getData(messageBytes)));
     }
-
 }

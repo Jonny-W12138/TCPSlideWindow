@@ -25,15 +25,29 @@ public class SenderConfirm extends Thread {
                 try {
                     byte[] ackBytes = (byte[]) ackInputStream.readObject();
                     SenderACKMessage senderACKMessage = new SenderACKMessage(ackBytes);
-                    System.out.println("SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId);
-                    senderProcess.logDisplay += "SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId + "\n";
-                    for (int i = 0; i < senderACKMessage.ackId; i++) {    //更新窗口中的报文段状态为已确认
-                        if (senderWindow.senderWindowList.get(i) != null) {
-                            senderWindow.senderWindowList.get(i).ifRecieverConfirmed = true;
-                            senderWindow.senderWindowList.remove(i); // 移除已确认的报文段
-                        }
+                    if(senderACKMessage.ackId==65535){
+                        senderWindow.windowSize = senderACKMessage.newWindowSize;
+                        System.out.println("SenderConfirm:更新窗口大小为"+senderWindow.windowSize);
+                        senderProcess.logDisplay += "SenderConfirm:更新窗口大小为"+senderWindow.windowSize + "\n";
+                        senderWindow.pTail = senderWindow.pStart + senderWindow.windowSize - 1;
                     }
-                    senderWindow.ackRenewPtr(senderACKMessage.ackId, senderACKMessage.newWindowSize);//更新窗口指针
+                    else {
+                        System.out.println("SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId);
+                        senderProcess.logDisplay += "SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId + "\n";
+                        if (senderACKMessage.newWindowSize >= 0 && senderACKMessage.newWindowSize != senderWindow.windowSize) {
+                            senderWindow.windowSize = senderACKMessage.newWindowSize;
+                            System.out.println("SenderConfirm:更新窗口大小为" + senderWindow.windowSize);
+                            senderProcess.logDisplay += "SenderConfirm:更新窗口大小为" + senderWindow.windowSize + "\n";
+                            senderWindow.pTail = senderWindow.pStart + senderWindow.windowSize - 1;
+                        }
+                        for (int i = 0; i < senderACKMessage.ackId; i++) {    //更新窗口中的报文段状态为已确认
+                            if (senderWindow.senderWindowList.get(i) != null) {
+                                senderWindow.senderWindowList.get(i).ifRecieverConfirmed = true;
+                                senderWindow.senderWindowList.remove(i); // 移除已确认的报文段
+                            }
+                        }
+                        senderWindow.ackRenewPtr(senderACKMessage.ackId, senderACKMessage.newWindowSize);//更新窗口指针
+                    }
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }

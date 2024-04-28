@@ -15,7 +15,8 @@ public class RecieverRecieve extends Thread {
     private static ObjectInputStream objectInputStream;
     private static RecieverProcess rp;
     private static RecieverWindow rw;
-    static Socket recieverSocket;
+    static Socket recieverSocket;// 对话框日志显示
+    public static int portNum;
 
 
 
@@ -51,6 +52,7 @@ public class RecieverRecieve extends Thread {
     static void CreateConnection() throws IOException {
         recieverSocket = new Socket("localhost", 8080);
         System.out.println("接收端已建立通信！" + recieverSocket.getPort());
+        portNum = recieverSocket.getPort();
 
         objectInputStream = new ObjectInputStream(recieverSocket.getInputStream());
         try {

@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class RecieverACKMessage implements Serializable {
     char type;  // 报文类型
     int ackId;  // 确认报文标识
-    int newWindowSize;  // 新的窗口大小
+    public int newWindowSize;  // 新的窗口大小
 
     public RecieverACKMessage(int ackId, int newWindowSize) {
         this.type = 1;
@@ -16,7 +16,7 @@ public class RecieverACKMessage implements Serializable {
     public RecieverACKMessage(int ackId) {
         this.type = 1;
         this.ackId = ackId;
-        this.newWindowSize = -1;    // -1表示不改变窗口大小
+        this.newWindowSize = RecieverProcess.newWindowSize;
     }
 
     public byte[] toByte() {

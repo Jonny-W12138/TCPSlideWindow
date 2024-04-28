@@ -12,5 +12,4 @@ public class SenderMessage implements Serializable {
     public boolean ifSended;   // 是否已发送
     public boolean ifRecieverConfirmed; // 是否已收到确认
 
-
 }

@@ -12,7 +12,8 @@ public class RecieverProcess extends Thread {
     static ObjectInputStream objectInputStream;
     public static ServerSocket recieverConfirmSocket;
     public static Socket senderConfirmSocket;
-    public static String textDisplay = "";   // 对话框日志显示
+    public static String textDisplay = "";
+    public static int newWindowSize=5;
     ObjectOutputStream ackOutputStream;
     RecieverRecieve recieverRecieve;
     RecieverWindow recieverWindow;
@@ -96,16 +97,11 @@ public class RecieverProcess extends Thread {
     }
 
     void createConnection() throws IOException {
-
         recieverConfirmSocket = new ServerSocket(8081);
         senderConfirmSocket = recieverConfirmSocket.accept();
         System.out.println("RecieverConfirm已建立通信！" + senderConfirmSocket.getPort());
         textDisplay += "RecieverConfirm已与Sender建立通信！" + senderConfirmSocket.getPort() + "\n";
         // 创建Socket输出流
         ackOutputStream = new ObjectOutputStream(senderConfirmSocket.getOutputStream());
-
-
     }
-
-
 }

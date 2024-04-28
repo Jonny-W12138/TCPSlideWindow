@@ -65,6 +65,7 @@ public class SenderProcess extends Thread {
 
             System.out.println("Sender向窗口增加一条内容，index：" + messageToSend.index);
             senderWindow.addMessageToWindow(messageToSend);
+            ++SenderWindow.elementNum;
 
             try {
                 Thread.sleep(300); // 0.3秒的停顿
@@ -84,6 +85,9 @@ public class SenderProcess extends Thread {
     }
 
     public void senderSendToReciever(byte[] msg) throws IOException {
+        if(senderWindow.windowSize == 0) {   // 窗口大小为0，不需要发送
+            return;
+        }
         objectOutputStream.writeObject(msg);    // 向输出流中写入对象
         objectOutputStream.flush(); // 务必flush！
     }

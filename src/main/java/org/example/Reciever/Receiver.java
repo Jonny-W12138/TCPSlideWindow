@@ -3,15 +3,13 @@ package org.example.Reciever;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.IOException;
 
 public class Receiver {
     private JTextField portNum;
     private JTextField senderWindowSize;
     private JButton 关闭Button;
-    private JTable table1;
     public JPanel Receiver;
     private JTextArea recieverLog;
     private JPanel ptrPanel;
@@ -63,6 +61,15 @@ public class Receiver {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
+            }
+        });
+        关闭Button.addKeyListener(new KeyAdapter() {
+        });
+        关闭Button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                System.exit(0);
             }
         });
     }

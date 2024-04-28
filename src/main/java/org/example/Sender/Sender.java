@@ -35,8 +35,6 @@ public class Sender {
     private JTextField windowSize;
     private JScrollBar scrollBar1;
     private JScrollPane ScrollLog;
-    private JScrollPane ScrollTable;
-    private JScrollBar scrollBar2;
     public String logContext;
 
     public static void main(String[] args) {
@@ -102,24 +100,6 @@ public class Sender {
                 }
             }
         });
-        int preElementNum = 0;
-        DefaultTableModel model = new DefaultTableModel();
-
-        JTableHeader header = SenderTable.getTableHeader();
-        header.setVisible(false);
-        for(int i=0;i<12;++i){
-            model.addColumn("");
-        }
-        model.addRow(new Object[]{"Alice", 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30});
-        SenderTable.setModel(model);
-
-        for(int i=0;i<12;++i){
-            TableColumn column = SenderTable.getColumnModel().getColumn(i);
-            column.setMinWidth(100);
-            column.setMaxWidth(100);
-        }
-        SenderTable.setRowHeight(50);
-
 
         Timer timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -129,7 +109,7 @@ public class Sender {
                 pTail.setText(Integer.toString(SenderWindow.getPTail()));
                 pStart.setText(Integer.toString(SenderWindow.getPStart()));
                 windowSize.setText(Integer.toString(SenderWindow.getWindowSize()));
-                SenderTable.removeAll();
+
                 /*for(int i=0;i<SenderWindow.elementNum;i++){
                     TableColumn newColumn = new TableColumn(i);
                     SenderTable.addColumn(newColumn);
@@ -139,6 +119,13 @@ public class Sender {
         });
         timer.start(); // Start the timer
 
+        closeBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                System.exit(0);
+            }
+        });
     }
 
 

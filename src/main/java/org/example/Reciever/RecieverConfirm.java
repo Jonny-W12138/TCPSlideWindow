@@ -30,7 +30,7 @@ public class RecieverConfirm extends Thread {
                     if (message!=null && message.dataLength != 0 && !message.is_confirm) {
                         long currentTime = System.currentTimeMillis();
                         long recieve_time = message.Recieve_Time.getTime();
-                        if (currentTime - recieve_time > 1000) {    // 超过1s 认为超时
+                        if (currentTime - recieve_time > 9000) {    // 超过9s 认为超时
                             System.out.println("Reciever超时器：" + i + "已超时");
                             RecieverProcess.textDisplay += "Reciever超时器：" + i + "已超时\n";
                             RecieverACKMessage ack_message = new RecieverACKMessage(rw.Get_IDmax());

@@ -27,14 +27,14 @@ public class RecieverRecieve extends Thread {
 
         // 对每16位进行计算
         for (int i = 0; i < data.length; i++) {
-            checksumValue += (data[i] & 0xFF) << 8;
-            if ((checksumValue & 0xFFFF0000) != 0) {
-                checksumValue &= 0xFFFF;
-                checksumValue++;
+            checksumValue += (data[i] & 0xFF) << 8; // 8位数据左移8位
+            if ((checksumValue & 0xFFFF0000) != 0) {    // 判断是否有进位
+                checksumValue &= 0xFFFF;    // 保留低16位
+                checksumValue++; // 进位加1
             }
 
             i++;
-            if (i < data.length) {
+            if (i < data.length) {  // 如果还有数据
                 checksumValue += (data[i] & 0xFF);
                 if ((checksumValue & 0xFFFF0000) != 0) {
                     checksumValue &= 0xFFFF;
@@ -56,7 +56,6 @@ public class RecieverRecieve extends Thread {
             // 校验和匹配，返回去除校验和后的数据
             return data;
         } else {
-            // 校验和不匹配，返回空数组或者抛出异常，具体操作视情况而定
             return new byte[0];
         }
     }

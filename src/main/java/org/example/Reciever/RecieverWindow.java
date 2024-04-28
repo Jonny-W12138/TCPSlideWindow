@@ -103,8 +103,13 @@ public class RecieverWindow {
     public static void sendMessageToSender(RecieverACKMessage message) throws IOException {
         int index = message.ackId;
         byte[] ack = message.toByte();
-        System.out.println("Receiver：向sender发送ACK报文：" + index);
-        RecieverProcess.textDisplay += "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
+        if(index == -1){
+            System.out.println("Receiver：将sender窗口调整为：" + message.newWindowSize);
+            RecieverProcess.textDisplay += "ReceiverConfirm：将sender窗口调整为：" + message.newWindowSize + "\n";
+        }else{
+            System.out.println("Receiver：向sender发送ACK报文：" + index);
+            RecieverProcess.textDisplay += "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
+        }
         for (int i = 0; i < index; i++) {
             if(MessageInfo_list.get(i)!=null){
                 MessageInfo_list.get(i).is_confirm = true; // 将ackID之前的报文段标记为已确认

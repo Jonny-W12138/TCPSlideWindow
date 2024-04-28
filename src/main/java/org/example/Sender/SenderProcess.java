@@ -27,7 +27,7 @@ public class SenderProcess extends Thread {
         senderSocket = new ServerSocket(8080);
         recieverSocket = senderSocket.accept();
         System.out.println("Sender已建立通信！" + recieverSocket.getPort());
-        logDisplay+="Sender已建立通信！" + recieverSocket.getPort()+"\n";
+        logDisplay="Sender已建立通信！" + recieverSocket.getPort()+"\n";
 
         // 获取接收端的IP和端口号
         recieverPort = recieverSocket.getPort();

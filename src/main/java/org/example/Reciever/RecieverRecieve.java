@@ -1,9 +1,5 @@
 package org.example.Reciever;
 
-import org.example.Sender.SenderACKMessage;
-import org.example.Sender.SenderProcess;
-import org.example.Sender.SenderWindow;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;

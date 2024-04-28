@@ -3,12 +3,8 @@ package org.example.Sender;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import java.awt.event.*;
 import java.io.IOException;
-import java.awt.BorderLayout;
 
 public class Sender {
     JPanel panel1;

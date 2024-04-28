@@ -1,7 +1,5 @@
 package org.example.Reciever;
 
-import org.example.Sender.SenderMessage;
-
 import java.io.IOException;
 
 // 累计确认计时器扫描线程类

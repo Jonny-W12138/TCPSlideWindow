@@ -1,9 +1,11 @@
 package org.example.Sender;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
-import java.sql.Time;
 
 // 发送端进程类
 public class SenderProcess extends Thread {
@@ -103,6 +105,14 @@ public class SenderProcess extends Thread {
             createConnection(); //sender创建数据包发送的Socket服务器端
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        FlatLightLaf.install();
+
+        try {
+            UIManager.setLookAndFeel( new FlatIntelliJLaf());
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
         }
         JFrame frame = new JFrame("Sender");
         frame.setContentPane(new Sender().panel1);

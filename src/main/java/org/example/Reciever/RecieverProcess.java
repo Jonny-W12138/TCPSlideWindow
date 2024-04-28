@@ -1,6 +1,6 @@
 package org.example.Reciever;
 
-import org.example.Sender.SenderMessage;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 
 import javax.swing.*;
 import java.util.Random;
@@ -54,6 +54,12 @@ public class RecieverProcess extends Thread {
         recieverWindow = new RecieverWindow(this);
         recieverRecieve = new RecieverRecieve(this, recieverWindow);
         recieverConfirm = new RecieverConfirm(recieverWindow);
+
+        try {
+            UIManager.setLookAndFeel( new FlatIntelliJLaf());
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
 
         JFrame frame = new JFrame("Receiver");
         frame.setContentPane(new Receiver(recieverWindow).Receiver);

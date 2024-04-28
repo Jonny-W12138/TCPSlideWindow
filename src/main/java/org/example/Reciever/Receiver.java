@@ -16,6 +16,7 @@ public class Receiver {
     private JTextField pStart;
     private JLabel pTailLabel;
     private JTextField pTail;
+    private JScrollBar scrollBar1;
     private RecieverWindow recieverWindow;
 
     public Receiver(RecieverWindow rw) {

@@ -9,6 +9,7 @@ import org.example.Sender.SenderDataProcessor;
 import java.io.IOException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.example.Reciever.RecieverDataProcessor;
 import org.example.Reciever.RecieverRecieve;
@@ -21,10 +22,10 @@ public class RecieverWindow {
     int message_sum = 0;//报文累加器
     static RecieverProcess recieverProcess;
 
-    static ArrayList<RecieverOriginMessage> MessageInfo_list;
+    static HashMap<Integer, RecieverOriginMessage> MessageInfo_list;
 
-    public int pStart;//起始指针
-    public int pTail;//尾部指针
+    public static int pStart;//起始指针
+    public static int pTail;//尾部指针
 
     public boolean is_empty() {
         if (pStart == pTail && pTail == MessageInfo_list.size())
@@ -40,7 +41,7 @@ public class RecieverWindow {
         return pTail;
     }
 
-    public ArrayList<RecieverOriginMessage> get_MessageInfo_list() {
+    public HashMap<Integer, RecieverOriginMessage> get_MessageInfo_list() {
         return MessageInfo_list;
     }
 
@@ -48,38 +49,38 @@ public class RecieverWindow {
     public RecieverWindow(RecieverProcess rp) {
         pStart = 0;
         pTail = pStart + size;
-        MessageInfo_list = new ArrayList<>();
+        MessageInfo_list = new HashMap<>();
         recieverProcess = rp;
     }
 
 
-    public void Move(int IDmax)  //改变接收窗口的位置
+    public static void Move(int IDmax)  //改变接收窗口的位置
     {
-        pStart = IDmax + 1;
-        pTail = pStart + 4;
+        pStart = IDmax;
+        pTail = pStart + 2;
     }
 
     public int Get_IDmax()//获得待发送的确认的标识
     {
         int res = pStart;
         for (int i = pStart; i <= pTail; i++) {
-            if ((MessageInfo_list.get(i).messageId != -1) && !MessageInfo_list.get(i).is_confirm) {
+            if (MessageInfo_list.get(i)!=null && (MessageInfo_list.get(i).messageId != -1) && !MessageInfo_list.get(i).is_confirm) {
                 res = i;
             }
             else{
                 break;
             }
         }
-        System.out.println("【Debug】Reciever:MaxID：" + res + 1);
+        System.out.println("【Debug】Reciever:MaxID：" + (res + 1));
         return res + 1;
     }
 
     public boolean Is_repeat(int ID)//判断是否是重复报文段
     {
-        if (ID >= MessageInfo_list.size()) {
+        if (ID >= MessageInfo_list.size() || MessageInfo_list.get(ID) == null){
             return false;
         }
-        return MessageInfo_list.get(ID).messageId == ID;
+        return MessageInfo_list.get(ID).is_confirm;
     }
 
 
@@ -94,11 +95,7 @@ public class RecieverWindow {
             }
             MessageInfo_list = list;
         }*/
-        if (ID >= MessageInfo_list.size()) {
-            for (int i = 0; i < 5; i++) {
-                MessageInfo_list.add(new RecieverOriginMessage(-1, "", null));
-            }
-        }
+        MessageInfo_list.put(ID, new RecieverOriginMessage(-1, "", null));
         MessageInfo_list.get(ID).messageId = ID;
         MessageInfo_list.get(ID).dataLength = RecieverDataProcessor.getLength(messageBytes);
         MessageInfo_list.get(ID).is_confirm = false;
@@ -119,9 +116,12 @@ public class RecieverWindow {
         System.out.println("Receiver：向sender发送ACK报文：" + index);
         RecieverProcess.textDisplay += "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
         for (int i = 0; i < index; i++) {
-            MessageInfo_list.get(i).is_confirm = true; // 将ackID之前的报文段标记为已确认
+            if(MessageInfo_list.get(i)!=null){
+                MessageInfo_list.get(i).is_confirm = true; // 将ackID之前的报文段标记为已确认
+            }
         }
         Reciever_send_to_Sender(ack);
+        Move(index);
 
     }
 

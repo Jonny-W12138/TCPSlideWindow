@@ -29,6 +29,7 @@ public class Sender {
     private JTextField pTail;
     private JLabel windowSizeLabel;
     private JTextField windowSize;
+    private JScrollBar scrollBar1;
     public String logContext;
 
     public static void main(String[] args) {
@@ -49,7 +50,7 @@ public class Sender {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                SenderProcess.textToSend = sendText.getText();
+
                 //System.out.println("发送窗体：" + SenderProcess.textToSend);
             }
 
@@ -68,7 +69,9 @@ public class Sender {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                SenderProcess.textSendTimes = Integer.parseInt(sendTimes.getText());
+                if(!sendTimes.getText().equals("")) {
+                    SenderProcess.textSendTimes = Integer.parseInt(sendTimes.getText());
+                }
                 //System.out.println("发送次数：" + SenderProcess.sendTimes);
             }
 

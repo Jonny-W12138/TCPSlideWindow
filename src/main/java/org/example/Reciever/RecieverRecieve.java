@@ -37,8 +37,14 @@ public class RecieverRecieve extends Thread {
 
     public static int get_error() {
         Random random = new Random();
-        int randomNumber = random.nextInt(4); // 生成一个0到3之间的随机数
-        return randomNumber;
+        int randomNumber = random.nextInt(5); // 生成一个0到4之间的随机数
+        if (randomNumber < 3) { // 50%的概率生成0
+            return 0;
+        } else if (randomNumber < 4) { // 25%的概率生成1
+            return 1;
+        } else { // 25%的概率生成2
+            return 2;
+        }
     }
 
 
@@ -56,20 +62,22 @@ public class RecieverRecieve extends Thread {
                 String data = RecieverDataProcessor.getData(receivedMessage); // 获取报文数据
                 int error_type = get_error();
                 // 方便调试 临时设置为0
-                error_type = 0;
+                // error_type = 0;
+                System.out.println("Reciever:收到Socket消息" + ID +":"+data);
+                RecieverProcess.textDisplay += "RecieverRecieve:收到Socket消息" + ID +":"+data +"\n";
                 if (error_type == 0) {
-                    System.out.println("Reciever:收到Socket消息： " + ID);
-                    RecieverProcess.textDisplay += "RecieverRecieve:收到Socket消息： " + ID + "\n";
                     Time receive_time=new Time(System.currentTimeMillis());
                     if (ID < rw.get_pStart() || ID > rw.get_pTail()) {
                         //show()
                     }
                     boolean result = rw.Is_repeat(ID);
                     if (result) {
+                        System.out.println("Reciecer消息ID:" + ID + "重复");
+                        RecieverProcess.textDisplay += "Reciecer消息ID:" + ID + "重复" + "\n";
                         int max_ID = rw.Get_IDmax();
 
                         //
-                        rw.Move(max_ID);
+                        rw.Move(max_ID-1);
                         rw.message_sum = 0;
 
                         RecieverACKMessage message=new RecieverACKMessage(max_ID);
@@ -81,27 +89,27 @@ public class RecieverRecieve extends Thread {
                         rw.message_sum += 1;
                         if (rw.message_sum == 3) {
 
-                            int max_ID = rw.Get_IDmax();
-
                             //
-                            rw.Move(max_ID);
+                            // rw.Move(max_ID);
+                            int max_ID = rw.Get_IDmax();
                             RecieverACKMessage message=new RecieverACKMessage(max_ID);
                             rw.sendMessageToSender(message);
                             rw.message_sum = 0;
+                            max_ID = rw.Get_IDmax(); // 再次获取，用于更新窗口
+                            rw.Move(max_ID-1);
                             //show()
                         } else {
                             //show()
                         }
                     }
-
                 }
                 else if (error_type == 1 || error_type == 2) {
-                    System.out.println("error:" + error_type + " Message_ID:" + ID);
+                    System.out.println("消息ID:" + ID + "错误，类型为：" + error_type);
+                    RecieverProcess.textDisplay += "消息ID:" + ID + "错误，类型为：" + error_type + "\n";
                     //show()展示
                 } else {
                     //show()
                 }
-
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

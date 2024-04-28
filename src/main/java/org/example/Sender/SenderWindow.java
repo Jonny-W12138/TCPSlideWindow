@@ -13,7 +13,7 @@ public class SenderWindow {
     int pTail;
     int windowSize; // 窗口大小
     SenderProcess senderProcess;
-    ArrayList<SenderMessage> senderWindowList;//报文段信息列表
+    HashMap<Integer, SenderMessage> senderWindowList;//报文段信息列表
     Timer senderWindowTimer;
 
     public SenderWindow(SenderProcess sp) {
@@ -21,7 +21,7 @@ public class SenderWindow {
         pCur = -1;
         pTail = 0;
         windowSize = 5;
-        senderWindowList = new ArrayList<SenderMessage>();
+        senderWindowList = new HashMap<>();
         senderProcess = sp;
         senderWindowTimer = new Timer();
 
@@ -31,9 +31,11 @@ public class SenderWindow {
             public void run() {
                 while (pCur != -1 && pCur <= pTail) {
                     try {
-                        sendMessageToReciever(pCur);
-                        System.out.println("Sender：主动发送下标" + pCur + "的报文！");
-                        ++pCur;
+                        if(senderWindowList.get(pCur) != null) {
+                            sendMessageToReciever(pCur);
+                            System.out.println("Sender：主动发送下标" + pCur + "的报文");
+                            ++pCur;
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -43,14 +45,14 @@ public class SenderWindow {
     }
 
     public void addMessageToWindow(SenderMessage messageToAdd) {
-        senderWindowList.add(messageToAdd);
+        senderWindowList.put(messageToAdd.index, messageToAdd);
 
         if (pCur == -1) {
             pStart = 0;
             pTail = 0;
             pCur = 0;
         } else {
-            pTail = Math.min(pStart + windowSize - 1, senderWindowList.size() - 1);
+            pTail = pStart + windowSize - 1;
         }
 
         // 供测试，添加一个数据立即发送出去
@@ -67,14 +69,16 @@ public class SenderWindow {
             return;
         }
         for (int i = pStart; i < ackId; i++) {  // 更新已确认的报文为收到
-            senderWindowList.get(i).ifRecieverConfirmed = true;
+            if(senderWindowList.get(i) != null) {
+                senderWindowList.get(i).ifRecieverConfirmed = true;
+            }
         }
         pStart = ackId;
         pCur = pStart;
         if (newWindowSize >= 0) {   // 更新窗口大小（如果有要求）
             windowSize = newWindowSize;
         }
-        pTail = Math.min(pStart + windowSize - 1, senderWindowList.size() - 1); // 更新窗口尾指针
+        pTail = pStart + windowSize - 1; // 更新窗口尾指针
     }
 
     public void sendMessageToReciever(int index) throws IOException {

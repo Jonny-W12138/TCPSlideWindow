@@ -2,6 +2,7 @@ package org.example.Sender;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.*;
 
 import static org.example.Sender.SenderProcess.senderWindow;
@@ -32,7 +33,7 @@ public class SenderWindow {
             public void run() {
                 while (pCur != -1 && pCur <= pTail) {
                     try {
-                        if(senderWindowList.get(pCur) != null) {
+                        if (senderWindowList.get(pCur) != null) {
                             sendMessageToReciever(pCur);
                             System.out.println("Sender：主动发送下标" + pCur + "的报文");
                             ++pCur;
@@ -70,7 +71,7 @@ public class SenderWindow {
             return;
         }
         for (int i = pStart; i < ackId; i++) {  // 更新已确认的报文为收到
-            if(senderWindowList.get(i) != null) {
+            if (senderWindowList.get(i) != null) {
                 senderWindowList.get(i).ifRecieverConfirmed = true;
             }
         }
@@ -90,7 +91,7 @@ public class SenderWindow {
         senderWindowList.get(index).sendTime = new Time(System.currentTimeMillis());
 
         System.out.println("Sender：senderProcess发送报文：" + index);
-        SenderProcess.logDisplay += "Sender：senderProcess发送报文：" + index + "\n";
+        SenderProcess.logDisplay += "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "Sender：senderProcess发送报文：" + index + "\n";
     }
 
     public static int getPStart() {

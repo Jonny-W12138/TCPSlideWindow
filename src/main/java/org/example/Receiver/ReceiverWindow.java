@@ -2,13 +2,14 @@ package org.example.Receiver;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.HashMap;
 
 // 接收窗口类
 public class ReceiverWindow {
 
 
-    int size = 3;//窗口大小
+    int size = 5;//窗口大小
     int message_sum = 0;//报文累加器
     static ReceiverProcess receiverProcess;
 
@@ -105,10 +106,10 @@ public class ReceiverWindow {
         byte[] ack = message.toByte();
         if(index == -1){
             System.out.println("Receiver：将sender窗口调整为：" + message.newWindowSize);
-            ReceiverProcess.textDisplay += "ReceiverConfirm：将sender窗口调整为：" + message.newWindowSize + "\n";
+            ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "ReceiverConfirm：将sender窗口调整为：" + message.newWindowSize + "\n";
         }else{
             System.out.println("Receiver：向sender发送ACK报文：" + index);
-            ReceiverProcess.textDisplay += "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
+            ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "ReceiverConfirm：向sender发送ACK报文：" + index + "\n";
         }
         for (int i = 0; i < index; i++) {
             if(MessageInfo_list.get(i)!=null){

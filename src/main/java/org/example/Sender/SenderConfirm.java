@@ -3,6 +3,7 @@ package org.example.Sender;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.time.LocalTime;
 
 // 确认接收线程类
 public class SenderConfirm extends Thread {
@@ -25,19 +26,18 @@ public class SenderConfirm extends Thread {
                 try {
                     byte[] ackBytes = (byte[]) ackInputStream.readObject();
                     SenderACKMessage senderACKMessage = new SenderACKMessage(ackBytes);
-                    if(senderACKMessage.ackId==65535){
+                    if (senderACKMessage.ackId == 65535) {
                         senderWindow.windowSize = senderACKMessage.newWindowSize;
-                        System.out.println("SenderConfirm:更新窗口大小为"+senderWindow.windowSize);
-                        senderProcess.logDisplay += "SenderConfirm:更新窗口大小为"+senderWindow.windowSize + "\n";
+                        System.out.println("SenderConfirm:更新窗口大小为" + senderWindow.windowSize);
+                        senderProcess.logDisplay += "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "SenderConfirm:更新窗口大小为" + senderWindow.windowSize + "\n";
                         senderWindow.pTail = senderWindow.pStart + senderWindow.windowSize - 1;
-                    }
-                    else {
+                    } else {
                         System.out.println("SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId);
-                        senderProcess.logDisplay += "SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId + "\n";
+                        senderProcess.logDisplay += "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "SenderConfirm:收到ACK，ACKID:" + senderACKMessage.ackId + "\n";
                         if (senderACKMessage.newWindowSize >= 0 && senderACKMessage.newWindowSize != senderWindow.windowSize) {
                             senderWindow.windowSize = senderACKMessage.newWindowSize;
                             System.out.println("SenderConfirm:更新窗口大小为" + senderWindow.windowSize);
-                            senderProcess.logDisplay += "SenderConfirm:更新窗口大小为" + senderWindow.windowSize + "\n";
+                            senderProcess.logDisplay += "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "SenderConfirm:更新窗口大小为" + senderWindow.windowSize + "\n";
                             senderWindow.pTail = senderWindow.pStart + senderWindow.windowSize - 1;
                         }
                         for (int i = 0; i < senderACKMessage.ackId; i++) {    //更新窗口中的报文段状态为已确认

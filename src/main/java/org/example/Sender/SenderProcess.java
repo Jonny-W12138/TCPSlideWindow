@@ -6,6 +6,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import java.time.LocalTime;
 
 // 发送端进程类
 public class SenderProcess extends Thread {
@@ -29,13 +30,13 @@ public class SenderProcess extends Thread {
         senderSocket = new ServerSocket(8080);
         recieverSocket = senderSocket.accept();
         System.out.println("Sender已建立通信！" + recieverSocket.getPort());
-        logDisplay="Sender已建立通信！" + recieverSocket.getPort()+"\n";
+        logDisplay="[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "Sender已建立通信！" + recieverSocket.getPort()+"\n";
 
         // 获取接收端的IP和端口号
         recieverPort = recieverSocket.getPort();
         recieverIP = recieverSocket.getInetAddress().toString().substring(1);
         System.out.println("Reciever的IP是：" + recieverIP);
-        logDisplay+="Reciever的IP是：" + recieverIP+"\n";
+        logDisplay+="[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "Reciever的IP是：" + recieverIP+"\n";
 
         // 创建Socket输出流
         objectOutputStream = new ObjectOutputStream(recieverSocket.getOutputStream());

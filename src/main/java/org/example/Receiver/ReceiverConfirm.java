@@ -1,6 +1,7 @@
 package org.example.Receiver;
 
 import java.io.IOException;
+import java.time.LocalTime;
 
 // 累计确认计时器扫描线程类
 public class ReceiverConfirm extends Thread {
@@ -30,7 +31,7 @@ public class ReceiverConfirm extends Thread {
                         long receive_time = message.Receive_Time.getTime();
                         if (currentTime - receive_time > 9000) {    // 超过9s 认为超时
                             System.out.println("Receiver超时器：" + i + "已超时");
-                            ReceiverProcess.textDisplay += "Receiver超时器：" + i + "已超时\n";
+                            ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "Receiver超时器：" + i + "已超时\n";
                             ReceiverACKMessage ack_message = new ReceiverACKMessage(rw.Get_IDmax());
                             try {
                                 ReceiverWindow.sendMessageToSender(ack_message);

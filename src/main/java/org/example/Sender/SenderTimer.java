@@ -1,6 +1,7 @@
 package org.example.Sender;
 
 import java.io.IOException;
+import java.time.LocalTime;
 
 //超时扫描线程类
 public class SenderTimer extends Thread {
@@ -24,7 +25,7 @@ public class SenderTimer extends Thread {
                         long sendTime = message.sendTime.getTime();
                         if (currentTime - sendTime > 10000) {    // 超过10s 认为超时
                             System.out.println("Sender超时器：" + i + "已超时");
-                            SenderProcess.logDisplay += "Sender超时器：" + i + "已超时\n";
+                            SenderProcess.logDisplay += "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" +  "Sender超时器：" + i + "已超时\n";
                             try {
                                 senderWindow.sendMessageToReciever(i);
                             } catch (IOException e) {

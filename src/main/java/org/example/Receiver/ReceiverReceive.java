@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Random;
 
 // 报文段接收线程类
@@ -104,7 +105,7 @@ public class ReceiverReceive extends Thread {
                 // 方便调试 临时设置为0
                 // error_type = 0;
                 System.out.println("Receiver:收到Socket消息" + ID +":"+data);
-                ReceiverProcess.textDisplay += "ReceiverReceive:收到Socket消息" + ID +":"+data +"\n";
+                ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "ReceiverReceive:收到Socket消息" + ID +":"+data +"\n";
                 if (error_type == 0) {
                     Time receive_time=new Time(System.currentTimeMillis());
                     if (ID < rw.get_pStart() || ID > rw.get_pTail()) {
@@ -113,7 +114,7 @@ public class ReceiverReceive extends Thread {
                     boolean result = rw.Is_repeat(ID);
                     if (result) {
                         System.out.println("Receicer消息ID:" + ID + "重复");
-                        ReceiverProcess.textDisplay += "Receicer消息ID:" + ID + "重复" + "\n";
+                        ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "Receicer消息ID:" + ID + "重复" + "\n";
                         int max_ID = rw.Get_IDmax();
 
                         //
@@ -145,7 +146,7 @@ public class ReceiverReceive extends Thread {
                 }
                 else if (error_type == 1 || error_type == 2) {
                     System.out.println("消息ID:" + ID + "错误，类型为：" + error_type);
-                    ReceiverProcess.textDisplay += "消息ID:" + ID + "错误，类型为：" + error_type + "\n";
+                    ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "消息ID:" + ID + "错误，类型为：" + error_type + "\n";
                     //show()展示
                 } else {
                     //show()

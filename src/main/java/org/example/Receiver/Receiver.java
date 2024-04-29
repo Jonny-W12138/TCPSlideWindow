@@ -39,11 +39,14 @@ public class Receiver {
             public void changedUpdate(DocumentEvent e) {
             }
         });
-
+        final String[] preText = {ReceiverProcess.textDisplay};
         Timer timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Update the text field with the current value of the variable
-                receiverLog.setText(ReceiverProcess.textDisplay);
+                if(!ReceiverProcess.textDisplay.equals(preText[0])){
+                    receiverLog.setText(ReceiverProcess.textDisplay);
+                    preText[0] = ReceiverProcess.textDisplay;
+                }
                 pStart.setText(String.valueOf(receiverWindow.get_pStart()));
                 pTail.setText(String.valueOf(receiverWindow.get_pTail()));
                 portNum.setText(String.valueOf(ReceiverReceive.portNum));

@@ -53,7 +53,7 @@ public class ReceiverWindow {
     public int Get_IDmax()//获得待发送的确认的标识
     {
         int res = pStart;
-        for (int i = pStart; i <= pTail; i++) {
+        for (int i = 0; i <= pTail; i++) {
             if (MessageInfo_list.get(i)!=null && (MessageInfo_list.get(i).messageId != -1) && !MessageInfo_list.get(i).is_confirm) {
                 res = i;
             }

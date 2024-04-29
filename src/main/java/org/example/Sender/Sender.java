@@ -97,10 +97,14 @@ public class Sender {
             }
         });
 
+        final String[] preLog = {SenderProcess.logDisplay};
         Timer timer = new Timer(100, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Update the text field with the current value of the variable
-                senderLog.setText(SenderProcess.logDisplay);
+                if(!preLog[0].equals(SenderProcess.logDisplay)){
+                    senderLog.setText(SenderProcess.logDisplay);
+                    preLog[0] = SenderProcess.logDisplay;
+                }
                 pCur.setText(Integer.toString(SenderWindow.getPCur()));
                 pTail.setText(Integer.toString(SenderWindow.getPTail()));
                 pStart.setText(Integer.toString(SenderWindow.getPStart()));

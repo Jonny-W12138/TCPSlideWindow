@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.util.Random;
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 // 报文段接收端进程类
 public class ReceiverProcess extends Thread {
@@ -18,6 +21,7 @@ public class ReceiverProcess extends Thread {
     ReceiverReceive receiverReceive;
     ReceiverWindow receiverWindow;
     ReceiverConfirm receiverConfirm;
+    public Lock lock;
 
 
     static int get_situation() {
@@ -53,7 +57,38 @@ public class ReceiverProcess extends Thread {
     public void run() {
         receiverWindow = new ReceiverWindow(this);
         receiverReceive = new ReceiverReceive(this, receiverWindow);
-        receiverConfirm = new ReceiverConfirm(receiverWindow);
+        receiverConfirm = new ReceiverConfirm(receiverWindow, this);
+        lock = new Lock() {
+            @Override
+            public void lock() {
+
+            }
+
+            @Override
+            public void lockInterruptibly() throws InterruptedException {
+
+            }
+
+            @Override
+            public boolean tryLock() {
+                return false;
+            }
+
+            @Override
+            public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+                return false;
+            }
+
+            @Override
+            public void unlock() {
+
+            }
+
+            @Override
+            public Condition newCondition() {
+                return null;
+            }
+        };
 
         try {
             UIManager.setLookAndFeel( new FlatIntelliJLaf());
@@ -106,7 +141,6 @@ public class ReceiverProcess extends Thread {
         receiverConfirmSocket = new ServerSocket(8081);
         senderConfirmSocket = receiverConfirmSocket.accept();
         System.out.println("ReceiverConfirm已建立通信！" + senderConfirmSocket.getPort());
-        textDisplay += "ReceiverConfirm已与Sender建立通信！" + senderConfirmSocket.getPort() + "\n";
         // 创建Socket输出流
         ackOutputStream = new ObjectOutputStream(senderConfirmSocket.getOutputStream());
     }

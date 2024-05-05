@@ -7,11 +7,13 @@ import java.time.LocalTime;
 public class ReceiverConfirm extends Thread {
 
     private ReceiverWindow rw;
+    private ReceiverProcess rp;
     private int max_send_time = 9000;
     public int receive_time;
 
-    public ReceiverConfirm(ReceiverWindow rw) {
+    public ReceiverConfirm(ReceiverWindow rw, ReceiverProcess rp) {
         this.rw = rw;
+        this.rp = rp;
     }
 
 
@@ -19,6 +21,7 @@ public class ReceiverConfirm extends Thread {
         System.out.println("ReceiverTimer开始运行！");
         while (true) {
             if (!rw.is_empty()) {
+                rp.lock.lock();
                 // 只要窗口中有元素 就遍历
                 for (int i = 0; i < rw.MessageInfo_list.size(); i++) {
                     ReceiverOriginMessage message = rw.MessageInfo_list.get(i);
@@ -42,6 +45,7 @@ public class ReceiverConfirm extends Thread {
                         }
                     }
                 }
+                rp.lock.unlock();
             }
             try {
                 Thread.sleep(500); // 等待500毫秒

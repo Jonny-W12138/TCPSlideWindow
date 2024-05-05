@@ -106,6 +106,7 @@ public class ReceiverReceive extends Thread {
                 // error_type = 0;
                 System.out.println("Receiver:收到Socket消息" + ID +":"+data);
                 ReceiverProcess.textDisplay +=  "[" + LocalTime.now().getMinute() + ":" + LocalTime.now().getSecond() + "." + String.format("%03d", LocalTime.now().getNano() / 1_000_000) + "]" + "ReceiverReceive:收到Socket消息" + ID +":"+data +"\n";
+                rp.lock.lock();
                 if (error_type == 0) {
                     Time receive_time=new Time(System.currentTimeMillis());
                     if (ID < rw.get_pStart() || ID > rw.get_pTail()) {
@@ -151,6 +152,7 @@ public class ReceiverReceive extends Thread {
                 } else {
                     //show()
                 }
+                rp.lock.unlock();
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

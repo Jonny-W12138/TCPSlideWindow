@@ -31,6 +31,7 @@ public class SenderWindow {
         senderWindowTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                senderProcess.lock.lock();
                 while (pCur != -1 && pCur <= pTail) {
                     try {
                         if (senderWindowList.get(pCur) != null) {
@@ -42,6 +43,7 @@ public class SenderWindow {
                         throw new RuntimeException(e);
                     }
                 }
+                senderProcess.lock.unlock();
             }
         }, 100, 100); // 每隔0.1秒检查一次超时
     }

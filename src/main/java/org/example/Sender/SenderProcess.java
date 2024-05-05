@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 // 发送端进程类
 public class SenderProcess extends Thread {
@@ -23,6 +26,7 @@ public class SenderProcess extends Thread {
     public static Socket recieverSocket;
     public static String logDisplay;    // 日志显示
     static ObjectOutputStream objectOutputStream;  // Socket的输出流
+    public Lock lock;
 
     public static Sender senderUI;
 
@@ -122,6 +126,38 @@ public class SenderProcess extends Thread {
         frame.setVisible(true);
 
         counter = 0;
+
+        lock = new Lock() {
+            @Override
+            public void lock() {
+
+            }
+
+            @Override
+            public void lockInterruptibly() throws InterruptedException {
+
+            }
+
+            @Override
+            public boolean tryLock() {
+                return false;
+            }
+
+            @Override
+            public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+                return false;
+            }
+
+            @Override
+            public void unlock() {
+
+            }
+
+            @Override
+            public Condition newCondition() {
+                return null;
+            }
+        };
 
         senderWindow = new SenderWindow(this);
         senderDataProcessor = new SenderDataProcessor();

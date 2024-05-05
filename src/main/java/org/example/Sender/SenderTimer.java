@@ -18,6 +18,7 @@ public class SenderTimer extends Thread {
         while (true){
             if(!senderWindow.senderWindowList.isEmpty()){
                 // 只要窗口中有元素 就遍历
+                senderProcess.lock.lock();
                 for (int i = senderWindow.pStart; i <= senderWindow.pTail; i++) {
                     SenderMessage message = senderWindow.senderWindowList.get(i);
                     if (message!=null && message.ifSended && !message.ifRecieverConfirmed) {
@@ -34,7 +35,7 @@ public class SenderTimer extends Thread {
                         }
                     }
                 }
-
+                senderProcess.lock.unlock();
             }
             try {
                 Thread.sleep(9000); // 等待500毫秒

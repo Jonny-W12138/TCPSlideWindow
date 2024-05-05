@@ -26,6 +26,7 @@ public class SenderConfirm extends Thread {
                 try {
                     byte[] ackBytes = (byte[]) ackInputStream.readObject();
                     SenderACKMessage senderACKMessage = new SenderACKMessage(ackBytes);
+                    senderProcess.lock.lock();
                     if (senderACKMessage.ackId == 65535) {
                         senderWindow.windowSize = senderACKMessage.newWindowSize;
                         System.out.println("SenderConfirm:更新窗口大小为" + senderWindow.windowSize);
@@ -48,6 +49,7 @@ public class SenderConfirm extends Thread {
                         }
                         senderWindow.ackRenewPtr(senderACKMessage.ackId, senderACKMessage.newWindowSize);//更新窗口指针
                     }
+                    senderProcess.lock.unlock();
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
